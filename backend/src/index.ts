@@ -22,6 +22,7 @@ import database from './client/database';
 {
 	try {
 		await database.tryMigrateToLatest();
+		await database.prepare();
 
 	} catch (error) {
 		console.error(error);

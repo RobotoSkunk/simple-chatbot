@@ -9,6 +9,7 @@ import vaults_chats_messages_list_all from './vaults/chats/messages/list-all';
 import vaults_chats_create from './vaults/chats/create';
 import vaults_chats_delete from './vaults/chats/delete';
 import vaults_chats_list_all from './vaults/chats/list-all';
+import vaults_chats_get_one from './vaults/chats/get-one';
 import vaults_chats_edit from './vaults/chats/edit';
 
 import vaults_create from './vaults/create';
@@ -22,6 +23,7 @@ router.get('/vault/:vaultId/chat/:chatId/messages', vaults_chats_messages_list_a
 router.post('/vault/:vaultId/chat/:chatId/message', vaults_chats_messages_create);
 
 router.get('/vault/:vaultId/chats', vaults_chats_list_all);
+router.get('/vault/:vaultId/chat/:chatId', vaults_chats_get_one);
 router.post('/vault/:vaultId/chat', vaults_chats_create);
 router.delete('/vault/:vaultId/chat/:chatId', vaults_chats_delete);
 router.patch('/vault/:vaultId/chat/:chatId', vaults_chats_edit);

@@ -64,12 +64,25 @@ class Database
 	}
 
 	/**
-	 * Test the database connection.
+	 * Prepares the database.
 	 */
-	public async testConnection(): Promise<void>
+	public async prepare(): Promise<void>
 	{
 		try {
-			sql<string>`SELECT NOW()`;
+			const { vaults_count } = await this.conn
+				.selectFrom('vaults')
+				.select(eb => eb.fn.countAll<number>().as('vaults_count'))
+				.executeTakeFirstOrThrow();
+
+			if (vaults_count == 0) {
+				await this.conn
+					.insertInto('vaults')
+					.values({
+						name: 'Default Vault',
+						emote: '🤖',
+					})
+					.execute();
+			}
 
 			console.log('Connected to database.');
 

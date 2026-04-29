@@ -35,6 +35,11 @@ class Chat
 		return this._color;
 	}
 
+	public get vaultId()
+	{
+		return this._vaultId;
+	}
+
 	public set color(newColor: number)
 	{
 		this._color = newColor;

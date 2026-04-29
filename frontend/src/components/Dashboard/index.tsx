@@ -30,6 +30,9 @@ export default function Dashboard({
 }>)
 {
 	const [ vaults, setVaults ] = useState<VaultData[]>([]);
+	const [ vaultsOpen, setVaultsOpen ] = useState(false);
+	const [ currentVault, setCurrentVault ] = useState(0);
+
 	const [ chats, setChats ] = useState<ChatData[]>([]);
 
 	useEffect(() =>
@@ -42,8 +45,17 @@ export default function Dashboard({
 				const response = await fetch(`http://localhost:5080/vaults`);
 				const list = await response.json() as VaultData[];
 
-				vaultId = list[0].id;
 				setVaults(list);
+
+				const storedVault = localStorage.getItem('current_vault') ?? '';
+				let vaultIndex = list.findIndex(v => v.id === storedVault);
+
+				if (vaultIndex < 0) {
+					vaultIndex = 0;
+				}
+
+				vaultId = list[vaultIndex].id;
+				setCurrentVault(vaultIndex);
 			}
 
 			{
@@ -66,11 +78,11 @@ export default function Dashboard({
 	}
 
 	return (
-		<VaultsContext.Provider value={{ data: vaults, update: updateVaults }}>
+		<VaultsContext.Provider value={{ currentVault, data: vaults, update: updateVaults }}>
 			<ChatsContext.Provider value={{ data: chats, update: updateChats }}>
 				<div className={ style.chats }>
 					<ChatButton/>
-					{ chats.toReversed().map((v, i) =>
+					{ chats.toReversed().map((v) =>
 					(
 						<ChatButton
 							chatId={ v.id }
@@ -81,15 +93,21 @@ export default function Dashboard({
 					<div>
 						<button
 							className={ style['vaults-button']}
+							onClick={() =>
+							{
+								setVaultsOpen(!vaultsOpen);
+							}}
 						>
 							<span>
-								<Image
+								{/* <Image
 									src={ vaultIcon }
 									alt=''
 									width={ 20 }
 									height={ 20 }
-								/>
-								Vault
+								/> */}
+								{ vaults[currentVault]?.emote }
+								{ ' ' }
+								{ vaults[currentVault]?.name }
 							</span>
 							<Image
 								src={ arrowIcon }

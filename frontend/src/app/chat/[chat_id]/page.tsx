@@ -4,6 +4,7 @@
 import {
 	use,
 	useContext,
+	useEffect,
 } from 'react';
 
 import {
@@ -11,6 +12,7 @@ import {
 } from '@/contexts/vaults';
 
 import Chat from '@/components/Chat';
+import { useRouter } from 'next/navigation';
 
 
 export default function Page({
@@ -21,6 +23,30 @@ export default function Page({
 {
 	const chatId = use(params).chat_id;
 	const vaultsContext = useContext(VaultsContext);
+	const router = useRouter();
+
+	useEffect(() =>
+	{
+		(async () =>
+		{
+			const response = await fetch(`http://localhost:5080/vault/-/chat/${chatId}`);
+			const data = await response.json() as { vault_id: string, error?: string };
+
+			if (data.error) {
+				router.push('/');
+				return;
+			}
+
+			let vaultIndex = vaultsContext.data.findIndex(v => v.id === data.vault_id);
+
+			if (vaultIndex < 0) {
+				vaultIndex = 0;
+			}
+
+			vaultsContext.currentVault = vaultIndex;
+			localStorage.setItem('current_vault', data.vault_id);
+		})();
+	}, [ vaultsContext.data ]);
 
 	if (vaultsContext.data.length == 0) {
 		return <></>;
