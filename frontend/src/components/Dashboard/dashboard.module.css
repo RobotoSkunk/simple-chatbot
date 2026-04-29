@@ -1,0 +1,26 @@
+
+.chats {
+	display: flex;
+	flex-direction: column-reverse;
+	justify-content: flex-end;
+
+	background: color-mix(in srgb, var(--background), white 5%);
+
+	width: 270px;
+	height: 100vh;
+}
+
+.vaults-button {
+	background: color-mix(in srgb, var(--background), white 10%);
+	padding: 10px 0px;
+
+	width: 100%;
+	font: inherit;
+	border: 0;
+	color: var(--foreground);
+
+	& span {
+		padding: 0px 8px;
+		font-weight: bold;
+	}
+}

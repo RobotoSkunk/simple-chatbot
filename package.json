@@ -1,0 +1,47 @@
+{
+  "name": "simple-chatbot",
+  "version": "0.1.0",
+  "description": "A personal self-hosted frontend for vLLM.",
+  "private": true,
+  "main": "backend/dist/index.js",
+  "scripts": {
+    "dev": "concurrently -n \"NEXT,BACKEND\" -c \"yellow,blue\" --kill-others \"next dev frontend --turbopack --port=8080\" \"nodemon\"",
+    "backend:w": "tsc -w -p backend",
+    "backend:build": "tsc -p backend",
+    "backend": "nodemon",
+    "next:dev": "next dev frontend --turbopack --port=8080",
+    "next:build": "next build frontend",
+    "next:start": "next start frontend",
+    "next:lint": "eslint frontend",
+    "migration:create": "ts-node ./scripts/migration-create.ts"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "framer-motion": "^12.38.0",
+    "katex": "^0.16.45",
+    "kysely": "^0.28.16",
+    "next": "^16.2.4",
+    "ollama": "^0.6.3",
+    "pg": "^8.20.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-markdown": "^10.1.0",
+    "rehype-highlight": "^7.0.2",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
+    "source-map-support": "^0.5.21",
+    "use-immer": "^0.11.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.6.0",
+    "@types/pg": "^8.20.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19",
+    "concurrently": "^9.2.1",
+    "eslint": "^10.2.1",
+    "eslint-config-next": "^16.2.4",
+    "typescript": "^6.0.3"
+  }
+}

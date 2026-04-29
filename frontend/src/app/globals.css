@@ -1,0 +1,41 @@
+
+@import url(highlight.css);
+
+:root {
+	/* --background: #0a0a0a; */
+	--background: #0d1117;
+	--foreground: #ededed;
+}
+
+html,
+body {
+	max-width: 100vw;
+	overflow: hidden;
+	font-family: sans-serif;
+}
+
+body {
+	color: var(--foreground);
+	background: var(--background);
+	padding: 0;
+	margin: 0;
+}
+
+a {
+	color: inherit;
+	/* text-decoration: none; */
+}
+
+#app {
+	display: flex;
+	flex-direction: row;
+
+	width: 100vw;
+	height: 100vh;
+}
+
+main {
+	/* overflow-x: hidden;
+	overflow-y: auto; */
+	flex-grow: 1;
+}
