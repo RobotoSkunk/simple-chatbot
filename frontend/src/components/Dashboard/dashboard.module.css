@@ -11,16 +11,35 @@
 }
 
 .vaults-button {
+	display: inline-flex;
+	justify-content: space-between;
+
 	background: color-mix(in srgb, var(--background), white 10%);
-	padding: 10px 0px;
+	padding: 15px 0px;
+	cursor: pointer;
 
 	width: 100%;
 	font: inherit;
+	font-size: 1.1em;
 	border: 0;
 	color: var(--foreground);
 
+	transition: background 0.2s ease;
+
+	&:hover,
+	&:focus-visible {
+		background: color-mix(in srgb, var(--background), white 20%);
+	}
+
 	& span {
+		display: flex;
+		align-items: center;
+
 		padding: 0px 8px;
 		font-weight: bold;
+	}
+
+	& img {
+		margin: 0 10px;
 	}
 }

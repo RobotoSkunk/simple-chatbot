@@ -6,6 +6,8 @@ import {
 	useState,
 } from 'react';
 
+import Image from 'next/image';
+
 import {
 	ChatsContext,
 } from '@/contexts/chats';
@@ -16,6 +18,8 @@ import {
 
 import ChatButton from '../ChatButton';
 
+import arrowIcon from '@/assets/icons/arrow-down.svg';
+import vaultIcon from '@/assets/icons/vault.svg';
 import style from './dashboard.module.css';
 
 
@@ -79,8 +83,20 @@ export default function Dashboard({
 							className={ style['vaults-button']}
 						>
 							<span>
+								<Image
+									src={ vaultIcon }
+									alt=''
+									width={ 20 }
+									height={ 20 }
+								/>
 								Vault
 							</span>
+							<Image
+								src={ arrowIcon }
+								alt=''
+								width={ 20 }
+								height={ 20 }
+							/>
 						</button>
 					</div>
 				</div>
