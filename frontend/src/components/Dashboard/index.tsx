@@ -99,14 +99,21 @@ export default function Dashboard({
 							}}
 						>
 							<span>
-								{/* <Image
-									src={ vaultIcon }
-									alt=''
-									width={ 20 }
-									height={ 20 }
-								/> */}
-								{ vaults[currentVault]?.emote }
-								{ ' ' }
+								{ vaults[currentVault]?.emote ?
+									<div
+										className={ style['vault-icon'] }
+									>
+										{ vaults[currentVault].emote }
+									</div>
+									:
+									<Image
+										src={ vaultIcon }
+										alt=''
+										width={ 20 }
+										height={ 20 }
+										className={ style['vault-icon'] }
+									/>
+								}
 								{ vaults[currentVault]?.name }
 							</span>
 							<Image
@@ -114,6 +121,7 @@ export default function Dashboard({
 								alt=''
 								width={ 20 }
 								height={ 20 }
+								className={ style.arrow }
 							/>
 						</button>
 					</div>

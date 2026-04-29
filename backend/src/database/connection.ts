@@ -79,7 +79,7 @@ class Database
 					.insertInto('vaults')
 					.values({
 						name: 'Default Vault',
-						emote: '🤖',
+						emote: null,
 					})
 					.execute();
 			}

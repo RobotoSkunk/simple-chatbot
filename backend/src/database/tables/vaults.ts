@@ -5,7 +5,7 @@ export interface DB_Vaults
 {
 	id?: string;
 	name?: string;
-	emote?: string;
+	emote?: string | null;
 	created_at?: Date;
 	user_prompt?: string | null;
 }

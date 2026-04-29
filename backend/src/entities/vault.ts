@@ -6,11 +6,11 @@ class Vault
 {
 	private _id: string;
 	public name: string;
-	public emote: string;
+	public emote: string | null;
 	public userPrompt: string | null;
 	public createdAt: Date;
 
-	constructor(id: string, name: string, emote: string, userPrompt: string | null, createdAt: Date)
+	constructor(id: string, name: string, emote: string | null, userPrompt: string | null, createdAt: Date)
 	{
 		this._id = id;
 		this.name = name;
@@ -65,7 +65,7 @@ class Vault
 		return vaults.map(({ id, name, emote, user_prompt, created_at }) => new Vault(
 			id as string,
 			name as string,
-			emote as string,
+			emote as string | null,
 			user_prompt as string | null,
 			created_at as Date,
 		));
@@ -86,7 +86,7 @@ class Vault
 		return new Vault(
 			vault.id as string,
 			vault.name as string,
-			vault.emote as string,
+			vault.emote as string | null,
 			vault.user_prompt as string | null,
 			vault.created_at as Date,
 		);
