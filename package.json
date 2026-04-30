@@ -1,7 +1,7 @@
 {
-  "name": "simple-chatbot",
+  "name": "personal-chatbot",
   "version": "0.1.0",
-  "description": "A personal self-hosted frontend for vLLM.",
+  "description": "A personal self-hosted frontend for Ollama.",
   "private": true,
   "main": "backend/dist/index.js",
   "scripts": {
