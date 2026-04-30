@@ -84,7 +84,7 @@ class Chat
 			])
 			.where('chat_id', '=', this._id)
 			// .where('messages.created_at', '<=', from)
-			.orderBy('messages.created_at', 'desc')
+			.orderBy('messages.created_at', 'asc')
 			// .limit(10)
 			.execute();
 
@@ -140,6 +140,7 @@ class Chat
 				'created_at',
 			])
 			.where('vault_id', '=', vaultId)
+			.orderBy('created_at', 'asc')
 			.execute();
 
 		return chats.map(({ id, name, color, created_at }) => new Chat(

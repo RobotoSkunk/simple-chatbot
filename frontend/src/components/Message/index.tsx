@@ -9,6 +9,7 @@ import Markdown from 'react-markdown';
 import highlithting from 'rehype-highlight';
 import remarkMath from 'remark-math';
 import rehypeMath from 'rehype-katex';
+import remarkGfm from 'remark-gfm';
 
 import style from './message.module.css';
 import 'katex/dist/katex.min.css';
@@ -46,6 +47,7 @@ export default function Message({
 						<Markdown
 							remarkPlugins={[
 								remarkMath,
+								remarkGfm,
 							]}
 							rehypePlugins={[
 								rehypeMath,

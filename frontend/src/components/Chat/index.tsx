@@ -254,7 +254,10 @@ export default function Chat({
 				const newSessionData: ChatData = await response.json();
 				chatsContext.update([
 					...chatsContext.data,
-					newSessionData,
+					{
+						...newSessionData,
+						ai_generated: true,
+					},
 				]);
 
 				router.push(`/chat/${newSessionData.id}`);
@@ -328,17 +331,6 @@ export default function Chat({
 								) }
 							</Message>
 						)) }
-
-						{/* <Message
-							createdAt={ new Date() }
-							role={ 'assistant' }
-						>
-							<div className={ style.loader }>
-								<div className={ style.dot }></div>
-								<div className={ style.dot }></div>
-								<div className={ style.dot }></div>
-							</div>
-						</Message> */}
 					</div>
 				</div>
 				<DottedDiv

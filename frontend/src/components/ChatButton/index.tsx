@@ -1,6 +1,7 @@
 
 import {
 	useContext,
+	useEffect,
 	useRef,
 	useState,
 } from 'react';
@@ -27,14 +28,17 @@ import style from './chatbutton.module.css';
 export default function ChatButton({
 	chatId,
 	chatName,
+	typeEffect,
 }: {
 	chatId?: string;
 	chatName?: string;
+	typeEffect?: boolean;
 })
 {
 	const chatsContext = useContext(ChatsContext);
 	
 	const [ editing, setEditing ] = useState(false);
+	const [ displayName, setDisplayName ] = useState('');
 	const optionsToggleRef = useRef<HTMLButtonElement | null>(null);
 	const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -55,12 +59,36 @@ export default function ChatButton({
 		);
 	}
 
+	useEffect(() =>
+	{
+		let intervalId: NodeJS.Timeout | undefined = undefined;
+		let currentIndex = 0;
+
+		if (typeEffect) {
+			intervalId = setInterval(() =>
+			{
+				if (currentIndex < chatName.length) {
+					setDisplayName(chatName.slice(0, currentIndex + 1));
+					currentIndex++;
+				} else {
+					clearInterval(intervalId);
+				}
+			}, 25);
+		} else {
+			setDisplayName(chatName);
+		}
+
+		return () => {
+			clearInterval(intervalId);
+		};
+	}, [ chatName ]);
+
 	return (
 		<div className={ style.chatbutton }>
 			{ !editing ?
 				<>
 					<Link href={ `/chat/${chatId}` }>
-						{ chatName }
+						{ displayName }
 					</Link>
 					<button
 						ref={ optionsToggleRef }

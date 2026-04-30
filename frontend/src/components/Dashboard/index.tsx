@@ -87,6 +87,7 @@ export default function Dashboard({
 						<ChatButton
 							chatId={ v.id }
 							chatName={ v.name }
+							typeEffect={ v.ai_generated }
 							key={ v.id }
 						/>
 					)) }

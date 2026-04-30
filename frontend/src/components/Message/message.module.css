@@ -7,7 +7,9 @@
 	position: relative;
 	margin: 15px 0;
 
-	--message-background: color-mix(in srgb, var(--background), white 10%);
+	--message-background: #151b23;
+	/* --message-background: color-mix(in srgb, var(--background), white 10%); */
+	--borders: 1px solid color-mix(in srgb, var(--background), white 25%);
 
 	&.user {
 		flex-direction: row-reverse;
@@ -42,9 +44,36 @@
 
 		pre:has(code) {
 			border-radius: 5px;
-			border: 1px solid color-mix(in srgb, var(--background), white 25%);
+			border: var(--borders);
 			background: #0d1117;
 			padding: 5px;
+
+			overflow: auto;
+		}
+
+		table {
+			display: block;
+			width: max-content;
+
+			border: var(--borders);
+			border-radius: 5px;
+			border-collapse: collapse;
+			border-spacing: 0;
+
+			overflow: auto;
+
+			tr > *,
+			th > * {
+				padding: 5px 10px;
+			}
+
+			thead tr {
+				background: color-mix(in srgb, var(--message-background), white 5%);
+			}
+
+			tbody tr:nth-child(odd) {
+				background: color-mix(in srgb, var(--message-background), var(--background) 50%);
+			}
 		}
 	}
 

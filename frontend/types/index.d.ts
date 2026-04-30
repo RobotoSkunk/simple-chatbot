@@ -16,6 +16,7 @@ declare global
 		color: number;
 		is_deleted: boolean;
 		created_at: number;
+		ai_generated?: boolean;
 	}
 
 	interface MessageData
