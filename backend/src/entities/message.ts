@@ -122,7 +122,7 @@ class Message
 				'content',
 				'generation_time',
 			])
-			.where('message_id', '=', this._contentId)
+			.where('message_id', '=', this._id)
 			.where('index', '=', index)
 			.executeTakeFirst();
 
@@ -142,6 +142,14 @@ class Message
 		this._content = contentData.content as string;
 		this._index = index;
 		this._generationTime = contentData.generation_time as number;
+	}
+
+	public async delete()
+	{
+		await database.conn
+			.deleteFrom('messages')
+			.where('id', '=', this.id)
+			.execute();
 	}
 
 	public static async register(chatId: string, role: MessageRoles, content: string, generationTime: number)

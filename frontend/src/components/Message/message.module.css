@@ -69,6 +69,22 @@
 				background: color-mix(in srgb, var(--message-background), var(--background) 50%);
 			}
 		}
+
+		& textarea {
+			border: 0;
+			flex-grow: 1;
+			background: color-mix(in srgb, var(--message-background), var(--background) 50%);
+			border-radius: 5px;
+
+			height: auto;
+			min-width: 450px;
+			outline: none;
+			padding: 10px 20px;
+			resize: vertical;
+
+			color: var(--foreground);
+			font-family: sans-serif;
+		}
 	}
 
 	& .triangle {
@@ -94,10 +110,10 @@
 		align-items: center;
 		justify-content: space-between;
 
-		font-size: 0.8em;
-
-		span {
+		& .date {
 			opacity: 0.5;
+			margin-right: 5px;
+			font-size: 0.8em;
 		}
 	}
 
@@ -120,6 +136,7 @@
 			margin: 0;
 			padding: 0;
 			opacity: 0.5;
+			font-size: 0.8em;
 		}
 	}
 }
@@ -132,6 +149,7 @@
 	background: transparent;
 	border: 0;
 	padding: 0;
+	margin: 0;
 
 	position: relative;
 	width: 22px;

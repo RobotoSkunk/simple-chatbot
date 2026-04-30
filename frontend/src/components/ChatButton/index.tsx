@@ -10,6 +10,10 @@ import {
 	ChatsContext,
 } from '@/contexts/chats';
 
+import {
+	host,
+} from '@/data/api';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import Dropdown from '../Dropdown';
@@ -123,7 +127,7 @@ export default function ChatButton({
 
 									if (confirmation) {
 										try {
-											await fetch(`http://localhost:5080/vault/-/chat/${chatId}`, {
+											await fetch(`${host}/vault/-/chat/${chatId}`, {
 												method: 'DELETE',
 											});
 
@@ -157,7 +161,7 @@ export default function ChatButton({
 								const newName = textAreaRef.current.value;
 
 								if (newName !== chatName) {
-									const response = await fetch(`http://localhost:5080/vault/-/chat/${chatId}`, {
+									const response = await fetch(`${host}/vault/-/chat/${chatId}`, {
 										method: 'PATCH',
 										headers: {
 											'Content-Type': 'application/json',

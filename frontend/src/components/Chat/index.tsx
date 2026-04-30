@@ -20,13 +20,13 @@ import {
 	ChatsContext,
 } from '@/contexts/chats';
 
-// import {
-// 	VaultsContext,
-// } from '@/contexts/vaults';
-
 import {
 	type ReadableStream,
 } from 'stream/web';
+
+import {
+	host,
+} from '@/data/api';
 
 import Image from 'next/image';
 
@@ -38,9 +38,6 @@ import style from './chat.module.css';
 import sendIcon from '@/assets/icons/send.svg';
 import spinnerIcon from '@/assets/icons/spinner.svg';
 
-
-// const wait = async (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-const host = 'http://localhost:5080';
 
 export default function Chat({
 	vaultId,
@@ -114,6 +111,7 @@ export default function Chat({
 			created_at: Date.now(),
 			generation_time: 0,
 			index: 0,
+			content_count: 1,
 		};
 
 		if (content) {
@@ -125,6 +123,7 @@ export default function Chat({
 					content: content,
 					created_at: Date.now(),
 					generation_time: 0,
+					content_count: 1,
 					index: 0,
 				},
 				message,
@@ -318,6 +317,42 @@ export default function Chat({
 								key={ v.id }
 								createdAt={ new Date(v.created_at) }
 								role={ v.role }
+
+								messageId={ v.id }
+								content={ v.content }
+								contentCount={ v.content_count }
+								contentIndex={ v.index }
+
+								onRegenerate={ async () => { } }
+								onEdit={ (newContent) => {
+									setMessages(m => {
+										const msg = m.find(m => m.id === v.id);
+
+										if (msg) {
+											msg.index++;
+											msg.content_count++;
+											msg.content = newContent;
+										}
+									});
+								} }
+								onDelete={ async () => {
+									const index = messages.findIndex(m => m.id === v.id);
+
+									const newMessages = [ ...messages ];
+									newMessages.splice(index, 1);
+
+									setMessages(newMessages);
+								} }
+								onLoadIndex={ async (newIndex, newContent) => {
+									setMessages(m => {
+										const msg = m.find(m => m.id === v.id);
+
+										if (msg) {
+											msg.index = newIndex;
+											msg.content = newContent;
+										}
+									});
+								} }
 							>
 								{ v.role === 'assistant' && ( v.content ||
 									<div className={ style.loader }>

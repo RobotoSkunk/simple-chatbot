@@ -16,6 +16,10 @@ import {
 	VaultsContext,
 } from '@/contexts/vaults';
 
+import {
+	host,
+} from '@/data/api';
+
 import ChatButton from '../ChatButton';
 
 import chevronIcon from '@/assets/icons/chevron-down.svg';
@@ -42,7 +46,7 @@ export default function Dashboard({
 			let vaultId = '';
 
 			{
-				const response = await fetch(`http://localhost:5080/vaults`);
+				const response = await fetch(`${host}/vaults`);
 				const list = await response.json() as VaultData[];
 
 				setVaults(list);
@@ -59,7 +63,7 @@ export default function Dashboard({
 			}
 
 			{
-				const response = await fetch(`http://localhost:5080/vault/${vaultId}/chats`);
+				const response = await fetch(`${host}/vault/${vaultId}/chats`);
 				const list = await response.json();
 
 				setChats(list);

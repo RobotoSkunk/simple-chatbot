@@ -26,6 +26,7 @@ declare global
 		index: number;
 		content: string;
 		generation_time: number;
+		content_count: number;
 		created_at: number;
 	}
 

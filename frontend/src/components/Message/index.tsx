@@ -1,11 +1,18 @@
 
 import {
 	Children,
+	useRef,
+	useState,
 } from 'react';
 
 import Image, {
 	StaticImageData,
 } from 'next/image';
+
+import {
+	host,
+} from '@/data/api';
+
 import Markdown from 'react-markdown';
 
 import highlithting from 'rehype-highlight';
@@ -22,19 +29,23 @@ import editIcon from '@/assets/icons/pen-line.svg';
 import trashIcon from '@/assets/icons/trash.svg';
 import leftIcon from '@/assets/icons/chevron-left.svg';
 import rightIcon from '@/assets/icons/chevron-right.svg';
-
+import checkIcon from '@/assets/icons/check.svg';
+import crossIcon from '@/assets/icons/cross.svg';
 
 function ButtonIcon({
 	src,
 	alt,
+	onClick,
 }: {
 	src: string | StaticImageData;
 	alt: string;
+	onClick: (ev: React.MouseEvent<HTMLButtonElement, MouseEvent>) => Promise<void>;
 })
 {
 	return (
 		<button
 			className={ style['button-icon'] }
+			onClick={ onClick }
 		>
 			<div></div>
 			<Image
@@ -52,12 +63,33 @@ export default function Message({
 	role,
 	createdAt,
 	children,
+	messageId,
+	content,
+	contentIndex,
+	contentCount,
+
+	onRegenerate,
+	onEdit,
+	onDelete,
+	onLoadIndex,
 }: {
 	role: 'user' | 'assistant';
 	createdAt?: Date;
 	children?: React.ReactNode;
+	messageId: string;
+	content: string;
+	contentIndex: number;
+	contentCount: number;
+
+	onRegenerate: () => Promise<void>;
+	onEdit: (newContent: string) => void;
+	onDelete: () => Promise<void>;
+	onLoadIndex: (index: number, content: string) => Promise<void>;
 })
 {
+	const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+	const [ editing, setEditing ] = useState(false);
+
 	function getFormattedDate()
 	{
 		if (!createdAt) {
@@ -76,6 +108,35 @@ export default function Message({
 		return format;
 	}
 
+	async function switchIndex(direction: -1 | 1)
+	{
+		const newIndex = contentIndex + direction;
+
+		if (newIndex < 0 || newIndex >= contentCount) {
+			return;
+		}
+
+		const response = await fetch(`${host}/vault/-/chat/-/message/${messageId}/set-index`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				index: newIndex,
+			}),
+		});
+
+		const json = await response.json() as {
+			success: boolean;
+			content: string;
+			error?: string;
+		};
+
+		if (json.success) {
+			await onLoadIndex(newIndex, json.content);
+		}
+	}
+
 	return (
 		<div className={ [
 			style.container,
@@ -91,56 +152,120 @@ export default function Message({
 			</> }
 			<div className={ style.message }>
 				<div className={ style.content }>
-					{ Children.map(children, child =>
-					(typeof child === 'string' ?
-						<Markdown
-							remarkPlugins={[
-								remarkMath,
-								remarkGfm,
-							]}
-							rehypePlugins={[
-								rehypeMath,
-								highlithting,
-							]}
-						>
-							{ child }
-						</Markdown>
-						: child
-					))}
+					{ editing ?
+						<textarea
+							defaultValue={ content }
+							ref={ textareaRef }
+						/>
+						:
+						Children.map(children, child =>
+						(typeof child === 'string' ?
+							<Markdown
+								remarkPlugins={[
+									remarkMath,
+									remarkGfm,
+								]}
+								rehypePlugins={[
+									rehypeMath,
+									highlithting,
+								]}
+							>
+								{ child }
+							</Markdown>
+							: child
+						))
+					}
 				</div>
 				<div className={ style.triangle }>
 					<div className={ style.circle }></div>
 				</div>
 				<div className={ style.info }>
 					<div className={ style.options }>
-						{ role === 'assistant' &&
+						{ editing ? <>
 							<ButtonIcon
-								src={ refreshIcon }
-								alt='Regenerate message'
+								src={ checkIcon }
+								alt='Confirm changes'
+								onClick={ async () => {
+									const newContent = textareaRef.current?.value ?? content;
+
+									if (newContent !== content) {
+										const response = await fetch(`${host}/vault/-/chat/-/message/${messageId}`, {
+											method: 'PATCH',
+											headers: {
+												'Content-Type': 'application/json',
+											},
+											body: JSON.stringify({
+												content: newContent,
+											}),
+										});
+
+										const json = await response.json() as { success: boolean, error?: string };
+
+										if (json.success) {
+											onEdit(newContent);
+										}
+									}
+
+									setEditing(false);
+								} }
 							/>
+							<ButtonIcon
+								src={ crossIcon }
+								alt='Cancel changes'
+								onClick={ async () => setEditing(false) }
+							/>
+						</> : <>
+							{ role === 'assistant' &&
+								<ButtonIcon
+									src={ refreshIcon }
+									alt='Regenerate message'
+									onClick={ onRegenerate }
+								/>
+							}
+							<ButtonIcon
+								src={ editIcon }
+								alt='Edit message'
+								onClick={ async () => setEditing(true) }
+							/>
+							<ButtonIcon
+								src={ trashIcon }
+								alt='Delete message'
+								onClick={ async () => {
+									const confirmation = confirm(
+										`Are you sure you want to delete this chat?\n\nThis can't be undone.`
+									);
+
+									if (confirmation) {
+										const response = await fetch(`${host}/vault/-/chat/-/message/${messageId}`, {
+											method: 'DELETE',
+										});
+
+										const json = await response.json() as { success: boolean, error?: string };
+
+										if (json.success) {
+											onDelete();
+										}
+									}
+								} }
+							/>
+						</>
 						}
-						<ButtonIcon
-							src={ editIcon }
-							alt='Edit message'
-						/>
-						<ButtonIcon
-							src={ trashIcon }
-							alt='Delete message'
-						/>
 					</div>
-					{ createdAt && <span>{ getFormattedDate() }</span> }
+					{ createdAt && <span className={ style.date }>{ getFormattedDate() }</span> }
 				</div>
 				<div className={ style.versions }>
 					<ButtonIcon
 						src={ leftIcon }
 						alt='Load previous generated message'
+						onClick={ async () => await switchIndex(-1) }
 					/>
 					<span>
-						1/3
+						{ contentIndex + 1 }/{ contentCount }
 					</span>
 					<ButtonIcon
 						src={ rightIcon }
 						alt='Load next generated message'
+						onClick={ async () => await switchIndex(1) }
 					/>
 				</div>
 			</div>
