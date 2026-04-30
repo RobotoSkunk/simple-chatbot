@@ -199,21 +199,23 @@ export default function Message({
 				</div>
 				{ messageId !== ':new_assistant' &&
 					<div className={ style.footer }>
-						<div className={ style.options }>
-							<ButtonIcon
-								src={ leftIcon }
-								alt='Load previous generated message'
-								onClick={ async () => await switchIndex(-1) }
-							/>
-							<span>
-								{ contentIndex + 1 }/{ contentCount }
-							</span>
-							<ButtonIcon
-								src={ rightIcon }
-								alt='Load next generated message'
-								onClick={ async () => await switchIndex(1) }
-							/>
-						</div>
+						{ contentCount > 1 &&
+							<div className={ style.options }>
+								<ButtonIcon
+									src={ leftIcon }
+									alt='Load previous generated message'
+									onClick={ async () => await switchIndex(-1) }
+								/>
+								<span>
+									{ contentIndex + 1 }/{ contentCount }
+								</span>
+								<ButtonIcon
+									src={ rightIcon }
+									alt='Load next generated message'
+									onClick={ async () => await switchIndex(1) }
+								/>
+							</div>
+						}
 						<div className={ style.options }>
 							{ editing ? <>
 								<ButtonIcon
