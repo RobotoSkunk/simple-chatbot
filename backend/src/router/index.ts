@@ -3,7 +3,7 @@ import {
 	Router,
 } from 'express';
 
-import messages_create from './vaults/chats/messages/create';
+import messages_getAskMiddleware from './vaults/chats/messages/ask';
 import messages_list_all from './vaults/chats/messages/list-all';
 import messages_edit from './vaults/chats/messages/edit';
 import messages_delete from './vaults/chats/messages/delete';
@@ -23,7 +23,8 @@ import vaults_list_all from './vaults/list-all';
 const router = Router();
 
 router.get('/vault/:vaultId/chat/:chatId/messages', messages_list_all);
-router.post('/vault/:vaultId/chat/:chatId/message', messages_create);
+router.post('/vault/:vaultId/chat/:chatId/message', messages_getAskMiddleware(true));
+router.post('/vault/:vaultId/chat/:chatId/message/:messageId/regenerate', messages_getAskMiddleware(false));
 router.patch('/vault/:vaultId/chat/:chatId/message/:messageId', messages_edit);
 router.delete('/vault/:vaultId/chat/:chatId/message/:messageId', messages_delete);
 router.post('/vault/:vaultId/chat/:chatId/message/:messageId/set-index', messages_set_index);

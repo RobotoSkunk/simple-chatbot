@@ -323,7 +323,6 @@ export default function Chat({
 								contentCount={ v.content_count }
 								contentIndex={ v.index }
 
-								onRegenerate={ async () => { } }
 								onEdit={ (newContent) => {
 									setMessages(m => {
 										const msg = m.find(m => m.id === v.id);
@@ -352,6 +351,71 @@ export default function Chat({
 											msg.content = newContent;
 										}
 									});
+								} }
+								onRegenerate={ async () => {
+									setBusy(true);
+									const response = await fetch(`${host}/vault/${vaultId}/chat/${chatId}/message/${v.id}/regenerate`, {
+										method: 'POST',
+									});
+
+									setMessages(m => {
+										const msg = m.find(m => m.id === v.id);
+
+										if (msg) {
+											msg.index++;
+											msg.content_count++;
+											msg.content = '';
+										}
+									});
+
+									if (response.body) {
+										const stream = response.body.pipeThrough(new TextDecoderStream('utf-8')) as ReadableStream;
+
+										for await (const value of stream) {
+											const parts: string[] = value.split('\n');
+
+											for (const part of parts) {
+												if (!part || part === ':heartbeat') {
+													continue;
+												}
+
+												let data: ChunkResponse;
+
+												try {
+													data = JSON.parse(part);
+												} catch (error) {
+													console.warn('Illegal JSON', error);
+													console.log(part);
+													continue;
+												}
+
+												console.log(data);
+
+												switch (data.type) {
+													case 'writing': {
+														setMessages(m => {
+															const msg = m.find(m => m.id === v.id);
+
+															if (msg) {
+																msg.content += data.token;
+															}
+														});
+														break;
+													}
+
+													case 'end': {
+														setBusy(false);
+														break;
+													}
+
+													case 'status': {
+														setStatus(data.status);
+														break;
+													}
+												}
+											}
+										}
+									}
 								} }
 							>
 								{ v.role === 'assistant' && ( v.content ||
