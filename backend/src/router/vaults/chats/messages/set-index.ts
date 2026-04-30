@@ -29,5 +29,6 @@ export default async function(req: Request, res: Response)
 	res.json({
 		success: true,
 		content: message.content,
+		edited_by_user: message.editedByUser == 1,
 	});
 }

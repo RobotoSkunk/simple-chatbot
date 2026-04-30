@@ -31,6 +31,7 @@ import leftIcon from '@/assets/icons/chevron-left.svg';
 import rightIcon from '@/assets/icons/chevron-right.svg';
 import checkIcon from '@/assets/icons/check.svg';
 import crossIcon from '@/assets/icons/cross.svg';
+import penIcon from '@/assets/icons/pen.svg';
 
 function ButtonIcon({
 	src,
@@ -67,6 +68,7 @@ export default function Message({
 	content,
 	contentIndex,
 	contentCount,
+	editedByUser,
 
 	onRegenerate,
 	onEdit,
@@ -80,11 +82,12 @@ export default function Message({
 	content: string;
 	contentIndex: number;
 	contentCount: number;
+	editedByUser: boolean;
 
 	onRegenerate: () => Promise<void>;
 	onEdit: (newContent: string) => void;
 	onDelete: () => Promise<void>;
-	onLoadIndex: (index: number, content: string) => Promise<void>;
+	onLoadIndex: (index: number, content: string, editedByUser: boolean) => Promise<void>;
 })
 {
 	const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -129,11 +132,12 @@ export default function Message({
 		const json = await response.json() as {
 			success: boolean;
 			content: string;
+			edited_by_user: boolean;
 			error?: string;
 		};
 
 		if (json.success) {
-			await onLoadIndex(newIndex, json.content);
+			await onLoadIndex(newIndex, json.content, json.edited_by_user);
 		}
 	}
 
@@ -180,94 +184,109 @@ export default function Message({
 					<div className={ style.circle }></div>
 				</div>
 				<div className={ style.info }>
-					<div className={ style.options }>
-						{ editing ? <>
-							<ButtonIcon
-								src={ checkIcon }
-								alt='Confirm changes'
-								onClick={ async () => {
-									const newContent = textareaRef.current?.value ?? content;
+					{ editedByUser &&
+						<Image
+							src={ penIcon }
+							alt='Edited by the user'
+							title='Edited by the user'
+							width={ 12 }
+							height={ 12 }
 
-									if (newContent !== content) {
-										const response = await fetch(`${host}/vault/-/chat/-/message/${messageId}`, {
-											method: 'PATCH',
-											headers: {
-												'Content-Type': 'application/json',
-											},
-											body: JSON.stringify({
-												content: newContent,
-											}),
-										});
-
-										const json = await response.json() as { success: boolean, error?: string };
-
-										if (json.success) {
-											onEdit(newContent);
-										}
-									}
-
-									setEditing(false);
-								} }
-							/>
-							<ButtonIcon
-								src={ crossIcon }
-								alt='Cancel changes'
-								onClick={ async () => setEditing(false) }
-							/>
-						</> : <>
-							{ role === 'assistant' &&
-								<ButtonIcon
-									src={ refreshIcon }
-									alt='Regenerate message'
-									onClick={ onRegenerate }
-								/>
-							}
-							<ButtonIcon
-								src={ editIcon }
-								alt='Edit message'
-								onClick={ async () => setEditing(true) }
-							/>
-							<ButtonIcon
-								src={ trashIcon }
-								alt='Delete message'
-								onClick={ async () => {
-									const confirmation = confirm(
-										`Are you sure you want to delete this chat?\n\nThis can't be undone.`
-									);
-
-									if (confirmation) {
-										const response = await fetch(`${host}/vault/-/chat/-/message/${messageId}`, {
-											method: 'DELETE',
-										});
-
-										const json = await response.json() as { success: boolean, error?: string };
-
-										if (json.success) {
-											onDelete();
-										}
-									}
-								} }
-							/>
-						</>
-						}
-					</div>
+							className={ style['edited-icon'] }
+						/>
+					}
 					{ createdAt && <span className={ style.date }>{ getFormattedDate() }</span> }
 				</div>
-				<div className={ style.versions }>
-					<ButtonIcon
-						src={ leftIcon }
-						alt='Load previous generated message'
-						onClick={ async () => await switchIndex(-1) }
-					/>
-					<span>
-						{ contentIndex + 1 }/{ contentCount }
-					</span>
-					<ButtonIcon
-						src={ rightIcon }
-						alt='Load next generated message'
-						onClick={ async () => await switchIndex(1) }
-					/>
-				</div>
+				{ messageId !== ':new_assistant' &&
+					<div className={ style.footer }>
+						<div className={ style.options }>
+							<ButtonIcon
+								src={ leftIcon }
+								alt='Load previous generated message'
+								onClick={ async () => await switchIndex(-1) }
+							/>
+							<span>
+								{ contentIndex + 1 }/{ contentCount }
+							</span>
+							<ButtonIcon
+								src={ rightIcon }
+								alt='Load next generated message'
+								onClick={ async () => await switchIndex(1) }
+							/>
+						</div>
+						<div className={ style.options }>
+							{ editing ? <>
+								<ButtonIcon
+									src={ checkIcon }
+									alt='Confirm changes'
+									onClick={ async () => {
+										const newContent = textareaRef.current?.value ?? content;
+
+										if (newContent !== content) {
+											const response = await fetch(`${host}/vault/-/chat/-/message/${messageId}`, {
+												method: 'PATCH',
+												headers: {
+													'Content-Type': 'application/json',
+												},
+												body: JSON.stringify({
+													content: newContent,
+												}),
+											});
+
+											const json = await response.json() as { success: boolean, error?: string };
+
+											if (json.success) {
+												onEdit(newContent);
+											}
+										}
+
+										setEditing(false);
+									} }
+								/>
+								<ButtonIcon
+									src={ crossIcon }
+									alt='Cancel changes'
+									onClick={ async () => setEditing(false) }
+								/>
+							</> : <>
+								{ role === 'assistant' &&
+									<ButtonIcon
+										src={ refreshIcon }
+										alt='Regenerate message'
+										onClick={ onRegenerate }
+									/>
+								}
+								<ButtonIcon
+									src={ editIcon }
+									alt='Edit message'
+									onClick={ async () => setEditing(true) }
+								/>
+								<ButtonIcon
+									src={ trashIcon }
+									alt='Delete message'
+									onClick={ async () => {
+										const confirmation = confirm(
+											`Are you sure you want to delete this chat?\n\nThis can't be undone.`
+										);
+
+										if (confirmation) {
+											const response = await fetch(`${host}/vault/-/chat/-/message/${messageId}`, {
+												method: 'DELETE',
+											});
+
+											const json = await response.json() as { success: boolean, error?: string };
+
+											if (json.success) {
+												onDelete();
+											}
+										}
+									} }
+								/>
+							</>
+							}
+						</div>
+					</div>
+				}
 			</div>
 		</div>
 	);

@@ -27,6 +27,7 @@ declare global
 		content: string;
 		generation_time: number;
 		content_count: number;
+		edited_by_user: boolean;
 		created_at: number;
 	}
 

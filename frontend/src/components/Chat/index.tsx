@@ -110,8 +110,9 @@ export default function Chat({
 			content: '',
 			created_at: Date.now(),
 			generation_time: 0,
-			index: 0,
 			content_count: 1,
+			edited_by_user: false,
+			index: 0,
 		};
 
 		if (content) {
@@ -124,6 +125,7 @@ export default function Chat({
 					created_at: Date.now(),
 					generation_time: 0,
 					content_count: 1,
+					edited_by_user: false,
 					index: 0,
 				},
 				message,
@@ -322,6 +324,7 @@ export default function Chat({
 								content={ v.content }
 								contentCount={ v.content_count }
 								contentIndex={ v.index }
+								editedByUser={ v.edited_by_user }
 
 								onEdit={ (newContent) => {
 									setMessages(m => {
@@ -331,6 +334,7 @@ export default function Chat({
 											msg.index++;
 											msg.content_count++;
 											msg.content = newContent;
+											msg.edited_by_user = true;
 										}
 									});
 								} }
@@ -342,13 +346,14 @@ export default function Chat({
 
 									setMessages(newMessages);
 								} }
-								onLoadIndex={ async (newIndex, newContent) => {
+								onLoadIndex={ async (newIndex, newContent, editedByUser) => {
 									setMessages(m => {
 										const msg = m.find(m => m.id === v.id);
 
 										if (msg) {
 											msg.index = newIndex;
 											msg.content = newContent;
+											msg.edited_by_user = editedByUser;
 										}
 									});
 								} }
@@ -365,6 +370,7 @@ export default function Chat({
 											msg.index++;
 											msg.content_count++;
 											msg.content = '';
+											msg.edited_by_user = false;
 										}
 									});
 

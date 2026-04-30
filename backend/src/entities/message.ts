@@ -11,6 +11,7 @@ class Message
 	private _content: string;
 	private _generationTime: number;
 	private _contentCount: number;
+	private _editedByUser: number;
 	private _createdAt: Date;
 
 	constructor(
@@ -21,6 +22,7 @@ class Message
 		content: string,
 		generationTime: number,
 		contentCount: number,
+		editedByUser: number,
 		createdAt: Date)
 	{
 		this._id = id;
@@ -30,6 +32,7 @@ class Message
 		this._content = content;
 		this._generationTime = generationTime;
 		this._contentCount = contentCount;
+		this._editedByUser = editedByUser;
 		this._createdAt = createdAt;
 	}
 
@@ -66,6 +69,11 @@ class Message
 	public get contentCount()
 	{
 		return this._contentCount;
+	}
+
+	public get editedByUser()
+	{
+		return this._editedByUser;
 	}
 
 	public get createdAt()
@@ -111,6 +119,7 @@ class Message
 		this._content = content;
 		this._index = lastContentData.index as number + 1;
 		this._generationTime = generationTime;
+		this._editedByUser = editedByUser ? 1 : 0;
 	}
 
 	public async loadContent(index: number)
@@ -121,6 +130,7 @@ class Message
 				'id',
 				'content',
 				'generation_time',
+				'edited_by_user',
 			])
 			.where('message_id', '=', this._id)
 			.where('index', '=', index)
@@ -142,6 +152,7 @@ class Message
 		this._content = contentData.content as string;
 		this._index = index;
 		this._generationTime = contentData.generation_time as number;
+		this._editedByUser = contentData.edited_by_user as number;
 	}
 
 	public async delete()
@@ -193,6 +204,7 @@ class Message
 			content,
 			generationTime,
 			1,
+			0,
 			message.created_at as Date,
 		);
 	}
@@ -209,6 +221,7 @@ class Message
 				'index',
 				'content',
 				'generation_time',
+				'edited_by_user',
 				selectFrom('message_contents')
 					.select(eb => eb.fn.countAll<number>().as('content_count'))
 					.whereRef('message_contents.message_id', '=', 'messages.id')
@@ -230,6 +243,7 @@ class Message
 			message.content as string,
 			message.generation_time as number,
 			message.content_count as number,
+			message.edited_by_user as number,
 			message.created_at as Date,
 		);
 	}

@@ -76,6 +76,7 @@ class Chat
 				'index',
 				'content',
 				'generation_time',
+				'edited_by_user',
 				selectFrom('message_contents')
 					.select(eb => eb.fn.countAll<number>().as('content_count'))
 					.whereRef('message_contents.message_id', '=', 'messages.id')
@@ -95,6 +96,7 @@ class Chat
 			content,
 			generation_time,
 			content_count,
+			edited_by_user,
 			created_at,
 		}) => new Message(
 			message_id as string,
@@ -104,6 +106,7 @@ class Chat
 			content as string,
 			generation_time as number,
 			content_count as number,
+			edited_by_user as number,
 			created_at as Date,
 		));
 	}

@@ -108,17 +108,21 @@
 	& .info {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
+		justify-content: flex-end;
+		opacity: 0.5;
 
 		& .date {
-			opacity: 0.5;
 			margin-right: 5px;
 			font-size: 0.8em;
 		}
+
+		& .edited-icon {
+			margin-right: 5px;
+		}
 	}
 
-	& .options,
-	& .versions {
+	& .footer,
+	& .options {
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -126,7 +130,7 @@
 		column-gap: 8px;
 	}
 
-	& .versions {
+	& .footer {
 		position: absolute;
 		bottom: 0%;
 		left: 5px;
@@ -207,7 +211,8 @@
 			}
 		}
 
-		& .versions {
+		& .footer {
+			flex-direction: row-reverse;
 			left: unset;
 			right: 5px;
 		}

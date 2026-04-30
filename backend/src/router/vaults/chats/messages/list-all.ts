@@ -31,7 +31,8 @@ export default async function(req: Request, res: Response)
 			content: message.content,
 			generation_time: message.generationTime,
 			content_count: message.contentCount,
-			created_at: message.createdAt,
+			edited_by_user: message.editedByUser == 1,
+			created_at: message.createdAt.getTime(),
 		}))
 	);
 }
