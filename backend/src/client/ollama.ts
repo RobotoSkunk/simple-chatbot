@@ -13,7 +13,7 @@ const ollama = new Ollama({
 });
 
 // const model = 'gemma4';
-const model = process.env.AI_MODEL;
+const model = process.env.AI_MODEL as string;
 
 // const options: Partial<OllamaOptions> = {
 // 	temperature: 1,
