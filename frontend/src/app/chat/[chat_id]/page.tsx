@@ -39,12 +39,9 @@ export default function Page({
 
 			let vaultIndex = vaultsContext.data.findIndex(v => v.id === data.vault_id);
 
-			if (vaultIndex < 0) {
-				vaultIndex = 0;
+			if (vaultIndex !== vaultsContext.currentVault) {
+				router.push('/');
 			}
-
-			vaultsContext.currentVault = vaultIndex;
-			localStorage.setItem('current_vault', data.vault_id);
 		})();
 	}, [ vaultsContext.data ]);
 

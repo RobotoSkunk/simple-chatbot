@@ -61,6 +61,7 @@ class Vault
 		const vaults = await database.conn
 			.selectFrom('vaults')
 			.selectAll()
+			.orderBy('created_at', 'asc')
 			.execute();
 
 		return vaults.map(({ id, name, emote, user_prompt, created_at }) => new Vault(

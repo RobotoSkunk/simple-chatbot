@@ -58,9 +58,6 @@ export default function ChatButton({
 		show: {
 			x: 0,
 			opacity: 1,
-			transition: {
-				delay: 0.2,
-			},
 		},
 	} satisfies Variants;
 
@@ -146,7 +143,7 @@ export default function ChatButton({
 					<Dropdown
 						toggleElement={ optionsToggleRef }
 						position={{
-							x: 'calc(100% - 15px)',
+							x: 'calc(100% + 5px)',
 							y: 'calc(50% + 10px)',
 						}}
 						options={[

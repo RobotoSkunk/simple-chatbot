@@ -1,8 +1,8 @@
 
 .chats {
 	display: flex;
-	flex-direction: column-reverse;
-	justify-content: flex-end;
+	flex-direction: column;
+	justify-content: flex-start;
 
 	background: color-mix(in srgb, var(--background), white 5%);
 

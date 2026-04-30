@@ -19,6 +19,7 @@ import {
 import {
 	AnimatePresence,
 	motion,
+	stagger,
 } from 'framer-motion';
 
 import {
@@ -117,19 +118,21 @@ export default function Dashboard({
 	return (
 		<VaultsContext.Provider value={{ currentVault, data: vaults, update: updateVaults }}>
 			<ChatsContext.Provider value={{ data: chats, update: updateChats }}>
-				<div className={ style.chats }>
-					<AnimatePresence mode='popLayout'>
-						<ChatButton/>
-						{ chats.toReversed().map((v) =>
-						(
-							<ChatButton
-								chatId={ v.id }
-								chatName={ v.name }
-								typeEffect={ v.ai_generated }
-								key={ v.id }
-							/>
-						)) }
-					</AnimatePresence>
+				<motion.div
+					className={ style.chats }
+					variants={{
+						hide: {
+							transition: {
+								delayChildren: stagger(0.1),
+							}
+						},
+						show: {
+							transition: {
+								delayChildren: stagger(0.1),
+							}
+						},
+					}}
+				>
 					<div className={ style['vault']}>
 						<button
 							className={ style['dropdown-toggle'] }
@@ -218,11 +221,11 @@ export default function Dashboard({
 													localStorage.setItem('current_vault', v.id);
 													let vaultIndex = vaults.findIndex(vi => vi.id === v.id);
 
-													if (vaultIndex < 0) {
-														vaultIndex = 0;
+													if (vaultIndex !== currentVault) {
+														setCurrentVault(vaultIndex);
+														router.push('/');
 													}
 
-													setCurrentVault(vaultIndex);
 													setVaultsOpen(false);
 												}}
 											>
@@ -298,7 +301,19 @@ export default function Dashboard({
 							}
 						</AnimatePresence>
 					</div>
-				</div>
+					<AnimatePresence mode='popLayout'>
+						{ chats.map((v) =>
+						(
+							<ChatButton
+								chatId={ v.id }
+								chatName={ v.name }
+								typeEffect={ v.ai_generated }
+								key={ v.id }
+							/>
+						)) }
+						<ChatButton/>
+					</AnimatePresence>
+				</motion.div>
 				<main>
 					{ children }
 				</main>

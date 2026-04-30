@@ -197,7 +197,7 @@ export default function Message({
 					}
 					{ createdAt && <span className={ style.date }>{ getFormattedDate() }</span> }
 				</div>
-				{ messageId !== ':new_assistant' &&
+				{ !messageId.startsWith(':new') && content.length > 0 &&
 					<div className={ style.footer }>
 						{ contentCount > 1 &&
 							<div className={ style.options }>
