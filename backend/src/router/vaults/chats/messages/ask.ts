@@ -103,7 +103,7 @@ export default function getAskMiddleware(isNewMessage: boolean)
 		}
 
 
-		const dbMessages = await chat.loadMessages();
+		const dbMessages = await chat.loadMessages(dbMessage?.createdAt);
 		dbMessages.reverse();
 
 		const messages: OllamaMessage[] = [

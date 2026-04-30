@@ -64,7 +64,7 @@ class Chat
 			.execute();
 	}
 
-	public async loadMessages()
+	public async loadMessages(from: Date = new Date())
 	{
 		const messages = await database.conn
 			.selectFrom('messages')
@@ -83,9 +83,8 @@ class Chat
 				'messages.created_at as created_at',
 			])
 			.where('chat_id', '=', this._id)
-			// .where('messages.created_at', '<=', from)
+			.where('messages.created_at', '<', from)
 			.orderBy('messages.created_at', 'asc')
-			// .limit(10)
 			.execute();
 
 		return messages.map(({
