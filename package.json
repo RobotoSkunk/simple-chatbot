@@ -6,6 +6,7 @@
   "main": "backend/dist/index.js",
   "scripts": {
     "dev": "concurrently -n \"NEXT,BACKEND\" -c \"yellow,blue\" --kill-others \"next dev frontend --turbopack --port=8080\" \"nodemon\"",
+    "start": "concurrently -n \"NEXT,BACKEND\" -c \"yellow,blue\" --kill-others \"next start frontend --port=8080\" \"node .\"",
     "backend:w": "tsc -w -p backend",
     "backend:build": "tsc -p backend",
     "backend": "nodemon",

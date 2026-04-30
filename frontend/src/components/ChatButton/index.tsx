@@ -18,7 +18,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Dropdown from '../Dropdown';
 
-import penSquare from '@/assets/icons/pen-square.svg';
+import optionsIcon from '@/assets/icons/dots-vertical.svg';
 import newChatIcon from '@/assets/icons/new-chat.svg';
 
 import trashIcon from '@/assets/icons/trash.svg';
@@ -99,7 +99,7 @@ export default function ChatButton({
 					>
 						<div></div>
 						<Image
-							src={ penSquare }
+							src={ optionsIcon }
 							alt='Edit chat options'
 							width={ 24 }
 							height={ 24 }
