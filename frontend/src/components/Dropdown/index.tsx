@@ -118,6 +118,7 @@ export default function Dropdown({
 					(
 						<motion.button
 							variants={ optionVariant }
+							className='default'
 
 							onClick={async () =>
 							{

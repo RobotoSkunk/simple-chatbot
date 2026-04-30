@@ -135,7 +135,7 @@ export default function Dashboard({
 				>
 					<div className={ style['vault']}>
 						<button
-							className={ style['dropdown-toggle'] }
+							className={ style['dropdown-toggle'] + ' default' }
 							onClick={() =>
 							{
 								setVaultsOpen(!vaultsOpen);
@@ -187,7 +187,7 @@ export default function Dashboard({
 						</button>
 						<div>
 							<button
-								className={ style['vault-options'] }
+								className={ style['vault-options'] + ' default' }
 								onClick={ () => setModalEditVaultOpen(true) }
 							>
 								<div></div>
@@ -215,7 +215,7 @@ export default function Dashboard({
 											key={ v.id }
 										>
 											<button
-												className={ style['dropdown-toggle'] }
+												className={ style['dropdown-toggle'] + ' default' }
 												onClick={() =>
 												{
 													localStorage.setItem('current_vault', v.id);
@@ -255,7 +255,7 @@ export default function Dashboard({
 										className={ style.vault + ' ' + style.new }
 									>
 										<button
-											className={ style['dropdown-toggle'] }
+											className={ style['dropdown-toggle'] + ' default' }
 											onClick={ async () => {
 												const newVaultName = prompt('Enter the name for your new vault.', 'New Vault');
 
@@ -352,19 +352,28 @@ export default function Dashboard({
 								}
 							} }
 						>
-							<input type='text' name='name' defaultValue={ vaults[currentVault].name }/>
-							<textarea name='user-prompt' defaultValue={ vaults[currentVault].user_prompt }/>
-							<button>
-								Save
-							</button>
-							<button
-								onClick={ (ev) => {
-									ev.preventDefault();
-									setModalEditVaultOpen(false);
-								} }
-							>
-								Cancel
-							</button>
+							<input
+								type='text'
+								name='name'
+								defaultValue={ vaults[currentVault].name }
+							/>
+							<textarea
+								name='user-prompt'
+								defaultValue={ vaults[currentVault].user_prompt }
+							/>
+							<p>
+								<button>
+									Save
+								</button>
+								<button
+									onClick={ (ev) => {
+										ev.preventDefault();
+										setModalEditVaultOpen(false);
+									} }
+								>
+									Cancel
+								</button>
+							</p>
 						</form>
 					</Modal>
 				}

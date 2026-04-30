@@ -6,7 +6,7 @@
 	position: absolute;
 	background: color-mix(in srgb, var(--background), white 15%);
 
-	box-shadow: 0px 0px 15px #00000060;
+	box-shadow: var(--box-shadow-15);
 
 	min-width: 200px;
 	border-radius: 10px;

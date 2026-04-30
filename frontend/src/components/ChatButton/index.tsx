@@ -130,7 +130,7 @@ export default function ChatButton({
 					</Link>
 					<button
 						ref={ optionsToggleRef }
-						className={ style.options }
+						className={ style.options + ' default' }
 					>
 						<div></div>
 						<Image
@@ -190,7 +190,7 @@ export default function ChatButton({
 						defaultValue={ chatName }
 					/>
 					<button
-						className={ style.options }
+						className={ style.options + ' default' }
 						onClick={async () => {
 							if (textAreaRef.current) {
 								const newName = textAreaRef.current.value;

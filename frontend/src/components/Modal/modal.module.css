@@ -30,7 +30,7 @@
 		padding: 10px 25px;
 
 		background: #151b23;
-		box-shadow: 0px 0px 15px #00000060;
+		box-shadow: var(--box-shadow-15);
 
 		min-width: 250px;
 		min-height: 150px;

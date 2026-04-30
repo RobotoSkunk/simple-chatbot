@@ -45,7 +45,7 @@ function ButtonIcon({
 {
 	return (
 		<button
-			className={ style['button-icon'] }
+			className={ style['button-icon'] + ' default' }
 			onClick={ onClick }
 		>
 			<div></div>

@@ -5,6 +5,12 @@
 	/* --background: #0a0a0a; */
 	--background: #0d1117;
 	--foreground: #ededed;
+	--background-secondary: #151b23;
+	--button-background: #212830;
+	--button-background-focus: #2d343f;
+	--border: 1px solid #3d444d;
+
+	--box-shadow-15: 0px 0px 15px #00000060;
 }
 
 html,
@@ -38,4 +44,35 @@ main {
 	/* overflow-x: hidden;
 	overflow-y: auto; */
 	flex-grow: 1;
+}
+
+button:not(.default),
+input:not(.default),
+textarea:not(.default) {
+	border-radius: 8px;
+	border: 0;
+
+	background: var(--button-background);
+	color: var(--foreground);
+	border: var(--border);
+	font: inherit;
+
+	padding: 4px 12px;
+	margin: 0 4px;
+
+	transition: background 0.2s ease;
+	outline: 0;
+
+	&:focus-visible {
+		background: var(--button-background-focus);
+	}
+}
+
+button:not(.default) {
+	cursor: pointer;
+
+	&:hover,
+	&:focus-visible {
+		background: var(--button-background-focus);
+	}
 }

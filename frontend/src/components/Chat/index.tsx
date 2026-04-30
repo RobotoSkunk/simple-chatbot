@@ -463,10 +463,12 @@ export default function Chat({
 						rows={ 1 }
 						disabled={ !chatId && busy }
 						onInput={ () => resize() }
+						className='default'
 					/>
 					<button
 						onClick={ onSendClick }
 						disabled={ busy }
+						className='default'
 					>
 						<div className={ style.circle }></div>
 						{ !busy ?
