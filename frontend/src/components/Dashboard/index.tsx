@@ -319,10 +319,12 @@ export default function Dashboard({
 				</main>
 				{ vaults[currentVault] &&
 					<Modal
+						title='Vault Settings'
 						open={ modalEditVaultOpen }
 						onCloseRequest={ () => setModalEditVaultOpen(false) }
 					>
 						<form
+							className={ style['vault-settings'] }
 							onSubmit={ async (ev) => {
 								ev.preventDefault();
 								const form = new FormData(ev.currentTarget);
@@ -352,28 +354,41 @@ export default function Dashboard({
 								}
 							} }
 						>
-							<input
-								type='text'
-								name='name'
-								defaultValue={ vaults[currentVault].name }
-							/>
-							<textarea
-								name='user-prompt'
-								defaultValue={ vaults[currentVault].user_prompt }
-							/>
-							<p>
-								<button>
-									Save
-								</button>
-								<button
-									onClick={ (ev) => {
-										ev.preventDefault();
-										setModalEditVaultOpen(false);
-									} }
-								>
-									Cancel
-								</button>
-							</p>
+							<div className={ style.sections }>
+								<button className='default'>General</button>
+								<button className='default'>Directories</button>
+								<button className='default'>Destructive</button>
+							</div>
+							<div className={ style.content }>
+								<p className={ style['user-input'] }>
+									<label htmlFor='name'>Name</label><br/>
+									<input
+										type='text'
+										name='name'
+										id='name'
+										defaultValue={ vaults[currentVault].name }
+									/>
+								</p>
+								<p className={ style['user-input'] }>
+									<label htmlFor='user-prompt'>Custom prompt</label><br/>
+									<textarea
+										name='user-prompt'
+										id='user-prompt'
+										defaultValue={ vaults[currentVault].user_prompt }
+									/>
+								</p>
+								<p className={ style.actions }>
+									<button>Save</button>
+									<button
+										onClick={ (ev) => {
+											ev.preventDefault();
+											setModalEditVaultOpen(false);
+										} }
+									>
+										Cancel
+									</button>
+								</p>
+							</div>
 						</form>
 					</Modal>
 				}

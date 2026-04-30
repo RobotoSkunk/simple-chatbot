@@ -136,3 +136,65 @@
 		border: 0;
 	}
 }
+
+.vault-settings {
+	display: flex;
+	flex-direction: row;
+
+	& .sections,
+	& .content {
+		border-top: var(--border);
+	}
+
+	& .sections {
+		border-right: var(--border);
+		width: 200px;
+
+		& button {
+			width: 100%;
+			padding: 10px;
+
+			font: inherit;
+			color: inherit;
+			text-align: left;
+			font-weight: bold;
+
+			cursor: pointer;
+			border: 0;
+			background: var(--background-secondary);
+
+			transition: background 0.2s ease;
+
+			&:hover,
+			&:focus-visible {
+				background: var(--button-background);
+			}
+		}
+	}
+
+	& .content {
+		width: 500px;
+
+		& .user-input {
+			display: flex;
+			flex-direction: column;
+			gap: 3px;
+			padding: 5px 10px;
+		}
+
+		& .actions {
+			display: flex;
+			justify-content: flex-end;
+
+			padding: 10px 25px;
+		}
+
+		& textarea,
+		& input {
+			width: calc(100% - 35px);
+
+			resize: vertical;
+			max-height: 250px;
+		}
+	}
+}

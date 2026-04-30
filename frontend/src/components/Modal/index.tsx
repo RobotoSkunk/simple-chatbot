@@ -4,17 +4,25 @@ import {
 	motion,
 } from 'framer-motion';
 
+import {
+	useState,
+} from 'react';
+
+import Image from 'next/image';
+
 import grainImg from '@/assets/img/grain.png';
+import crossIcon from '@/assets/icons/cross.svg';
 
 import style from './modal.module.css';
-import { useState } from 'react';
 
 export default function Modal({
 	open,
+	title,
 	onCloseRequest,
 	children,
 }: {
 	open?: boolean;
+	title: string;
 	onCloseRequest: () => void;
 	children?: React.ReactNode;
 })
@@ -35,10 +43,7 @@ export default function Modal({
 						style={{
 							backgroundImage: `url(${grainImg.src})`,
 						}}
-						onClick={() =>
-						{
-							onCloseRequest();
-						}}
+						onClick={ () => onCloseRequest() }
 					/>
 					<motion.div
 						initial={{
@@ -56,6 +61,20 @@ export default function Modal({
 
 						className={ style.modal }
 					>
+						<div className={ style.header }>
+							<h2>{ title }</h2>
+							<button
+								className={ style.close }
+								onClick={ () => onCloseRequest() }
+							>
+								<Image
+									src={ crossIcon }
+									alt='Close'
+									width={ 20 }
+									height={ 20 }
+								/>
+							</button>
+						</div>
 						{ children }
 					</motion.div>
 				</motion.div>
