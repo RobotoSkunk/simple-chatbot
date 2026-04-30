@@ -13,7 +13,7 @@ const ollama = new Ollama({
 });
 
 // const model = 'gemma4';
-const model = 'qwen3.6';
+const model = process.env.AI_MODEL;
 
 // const options: Partial<OllamaOptions> = {
 // 	temperature: 1,
