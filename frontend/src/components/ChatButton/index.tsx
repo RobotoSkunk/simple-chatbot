@@ -7,6 +7,11 @@ import {
 } from 'react';
 
 import {
+	motion,
+	Variants,
+} from 'framer-motion';
+
+import {
 	ChatsContext,
 } from '@/contexts/chats';
 
@@ -45,20 +50,44 @@ export default function ChatButton({
 	const optionsToggleRef = useRef<HTMLButtonElement | null>(null);
 	const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
+	const variants = {
+		hide: {
+			x: -150,
+			opacity: 0,
+		},
+		show: {
+			x: 0,
+			opacity: 1,
+			transition: {
+				delay: 0.2,
+			},
+		},
+	} satisfies Variants;
+
 	if (!chatId || !chatName) {
 		return (
-			<Link
-				href='/'
+			<motion.div
+				initial='show'
+				animate='show'
+				exit='hide'
+				variants={ variants }
+
 				className={ style.chatbutton + ' ' + style.template }
+				key={ 'new-chat' }
+				layout
 			>
-				<Image
-					src={ newChatIcon }
-					alt=''
-					width={ 24 }
-					height={ 24 }
-				/>
-				<span>New Chat</span>
-			</Link>
+				<Link
+					href='/'
+				>
+					<Image
+						src={ newChatIcon }
+						alt=''
+						width={ 24 }
+						height={ 24 }
+					/>
+					<span>New Chat</span>
+				</Link>
+			</motion.div>
 		);
 	}
 
@@ -87,7 +116,16 @@ export default function ChatButton({
 	}, [ chatName ]);
 
 	return (
-		<div className={ style.chatbutton }>
+		<motion.div
+			initial='hide'
+			animate='show'
+			exit='hide'
+			variants={ variants }
+
+			className={ style.chatbutton }
+			key={ chatId }
+			layout
+		>
 			{ !editing ?
 				<>
 					<Link href={ `/chat/${chatId}` }>
@@ -199,6 +237,6 @@ export default function ChatButton({
 					</button>
 				</>
 			}
-		</div>
+		</motion.div>
 	);
 }
