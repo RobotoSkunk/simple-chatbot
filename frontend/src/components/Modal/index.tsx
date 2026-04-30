@@ -47,16 +47,16 @@ export default function Modal({
 					/>
 					<motion.div
 						initial={{
-							y: -20,
-							rotateX: 25,
+							y: -15,
+							rotateX: 5,
 						}}
 						animate={{
 							y: 0,
 							rotateX: 0,
 						}}
 						exit={{
-							y: 20,
-							rotateX: -25,
+							y: 15,
+							rotateX: -5,
 						}}
 
 						className={ style.modal }

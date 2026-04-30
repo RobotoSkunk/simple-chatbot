@@ -55,8 +55,9 @@
 
 	max-width: 750px;
 	width: calc(100% - 20px);
-	background: color-mix(in srgb, var(--background), white 10%);
+	background: var(--background-secondary);
 
+	border: var(--border);
 	border-radius: 15px;
 	margin: 10px 0;
 
