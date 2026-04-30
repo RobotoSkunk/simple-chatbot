@@ -5,12 +5,12 @@
 	align-items: flex-end;
 
 	position: relative;
-	margin: 15px 0;
+	margin: 30px 0;
 
 	--message-background: #151b23;
 	--borders: 1px solid color-mix(in srgb, var(--background), white 25%);
 
-	&.user {
+	&.role-user {
 		flex-direction: row-reverse;
 	}
 }
@@ -28,15 +28,15 @@
 	margin-left: 20px;
 	max-width: 75%;
 
-	.content {
+	& .content {
 		max-width: 100%;
 		margin: 5px 0;
 
-		p {
+		& p {
 			margin: 5px 0;
 		}
 
-		pre:has(code) {
+		& pre:has(code) {
 			border-radius: 5px;
 			border: var(--borders);
 			background: #0d1117;
@@ -45,7 +45,7 @@
 			overflow: auto;
 		}
 
-		table {
+		& table {
 			display: block;
 			width: max-content;
 
@@ -56,22 +56,22 @@
 
 			overflow: auto;
 
-			tr > *,
-			th > * {
+			& tr > *,
+			& th > * {
 				padding: 5px 10px;
 			}
 
-			thead tr {
+			& thead tr {
 				background: color-mix(in srgb, var(--message-background), white 5%);
 			}
 
-			tbody tr:nth-child(odd) {
+			& tbody tr:nth-child(odd) {
 				background: color-mix(in srgb, var(--message-background), var(--background) 50%);
 			}
 		}
 	}
 
-	.triangle {
+	& .triangle {
 		position: absolute;
 		bottom: 0;
 		left: -15px;
@@ -80,7 +80,7 @@
 		width: 15px;
 		height: 20px;
 
-		.circle {
+		& .circle {
 			width: 100%;
 			height: 100%;
 
@@ -89,44 +89,122 @@
 		}
 	}
 
-	.info {
+	& .info {
 		display: flex;
 		align-items: center;
-		justify-content: flex-end;
+		justify-content: space-between;
 
 		font-size: 0.8em;
+
+		span {
+			opacity: 0.5;
+		}
+	}
+
+	& .options,
+	& .versions {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		column-gap: 8px;
+	}
+
+	& .versions {
+		position: absolute;
+		bottom: 0%;
+		left: 5px;
+		transform: translate(0%, calc(100% + 5px));
+
+		& span {
+			margin: 0;
+			padding: 0;
+			opacity: 0.5;
+		}
+	}
+}
+
+.button-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+
+	background: transparent;
+	border: 0;
+	padding: 0;
+
+	position: relative;
+	width: 22px;
+	height: 22px;
+
+	cursor: pointer;
+
+	& > img {
 		opacity: 0.5;
+		transition: opacity 0.2s ease;
+	}
+
+	& > div {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+
+		width: 0%;
+		height: 0%;
+		border-radius: 50%;
+
+		background: white;
+		opacity: 0.3;
+		transform: translate(-50%, -50%);
+
+		transition: width 0.2s ease, height 0.2s ease;
+	}
+
+	&:hover,
+	&:focus-visible {
+		& > img {
+			opacity: 1;
+		}
+
+		& > div {
+			width: 125%;
+			height: 125%;
+		}
 	}
 }
 
 .container {
-	&.user .message {
+	&.role-user .message {
 		border-bottom-right-radius: 0;
 
 		margin-left: 0px;
 		margin-right: 20px;
 
-		.triangle {
+		& .triangle {
 			left: calc(100%);
 
-			.circle {
+			& .circle {
 				border-bottom-right-radius: 0;
 				border-bottom-left-radius: 100%;
 			}
 		}
+
+		& .versions {
+			left: unset;
+			right: 5px;
+		}
 	}
 
-	&.assistant {
-		img {
+	&.role-assistant {
+		& > img {
 			position: relative;
 			border-radius: 50%;
 
 			transform: translateY(25%);
 		}
 
-		.message {
+		& .message {
 			border-bottom-left-radius: 0;
 		}
 	}
 }
-

@@ -18,7 +18,7 @@ import {
 
 import ChatButton from '../ChatButton';
 
-import arrowIcon from '@/assets/icons/arrow-down.svg';
+import chevronIcon from '@/assets/icons/chevron-down.svg';
 import vaultIcon from '@/assets/icons/vault.svg';
 import style from './dashboard.module.css';
 
@@ -118,7 +118,7 @@ export default function Dashboard({
 								{ vaults[currentVault]?.name }
 							</span>
 							<Image
-								src={ arrowIcon }
+								src={ chevronIcon }
 								alt=''
 								width={ 20 }
 								height={ 20 }
