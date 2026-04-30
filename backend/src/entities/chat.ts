@@ -83,8 +83,8 @@ class Chat
 				'messages.created_at as created_at',
 			])
 			.where('chat_id', '=', this._id)
-			// .where('messages.created_at', '>=', from)
-			// .orderBy('messages.created_at', 'desc')
+			// .where('messages.created_at', '<=', from)
+			.orderBy('messages.created_at', 'desc')
 			// .limit(10)
 			.execute();
 

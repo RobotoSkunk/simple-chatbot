@@ -154,13 +154,24 @@ export default async function(req: Request, res: Response)
 		res.write(JSON.stringify(data) + '\n');
 	}
 
+	let thinkingPing: NodeJS.Timeout | undefined = undefined;
+
 	async function generate()
 	{
+		if (thinkingPing) {
+			clearInterval(thinkingPing);
+		}
+
+		thinkingPing = setInterval(() =>
+		{
+			sendDataChunk({ type: 'status', status: 'thinking' });
+		}, 1000);
+
 		const stream = await ollama.chat({
 			model,
 			messages,
 			stream: true,
-			think: true,
+			think: false,
 			tools,
 			options,
 		});
@@ -231,6 +242,10 @@ export default async function(req: Request, res: Response)
 
 				content += token;
 				sendDataChunk({ type: 'writing', token });
+
+				if (thinkingPing) {
+					clearInterval(thinkingPing);
+				}
 			}
 
 			if (chunk.done) {
@@ -259,4 +274,8 @@ export default async function(req: Request, res: Response)
 
 	await generate();
 	res.end();
+
+	if (thinkingPing) {
+		clearInterval(thinkingPing);
+	}
 }
