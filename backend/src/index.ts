@@ -10,11 +10,6 @@ import {
 	router,
 } from './router';
 
-import {
-	ollama,
-	model,
-} from './client/ollama';
-
 import database from './client/database';
 
 
@@ -39,7 +34,5 @@ import database from './client/database';
 		}
 
 		console.info('Backend ready.');
-
-		(async () => await ollama.chat({ model }))();
 	});
 })();
