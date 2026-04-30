@@ -14,14 +14,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Dropdown from '../Dropdown';
 
-import editIcon from '@/assets/icons/edit.svg';
+import penSquare from '@/assets/icons/pen-square.svg';
 import newChatIcon from '@/assets/icons/new-chat.svg';
 
 import trashIcon from '@/assets/icons/trash.svg';
 import penLineIcon from '@/assets/icons/pen-line.svg';
 
 import checkIcon from '@/assets/icons/check.svg';
-// import crossIcon from '@/assets/icons/cross.svg';
 
 import style from './chatbutton.module.css';
 
@@ -96,7 +95,7 @@ export default function ChatButton({
 					>
 						<div></div>
 						<Image
-							src={ editIcon }
+							src={ penSquare }
 							alt='Edit chat options'
 							width={ 24 }
 							height={ 24 }

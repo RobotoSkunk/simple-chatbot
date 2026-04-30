@@ -8,7 +8,6 @@
 	margin: 15px 0;
 
 	--message-background: #151b23;
-	/* --message-background: color-mix(in srgb, var(--background), white 10%); */
 	--borders: 1px solid color-mix(in srgb, var(--background), white 25%);
 
 	&.user {
@@ -31,11 +30,6 @@
 
 	.content {
 		max-width: 100%;
-
-		/* line-break: auto;
-		white-space: pre-wrap;
-		font-family: sans-serif; */
-
 		margin: 5px 0;
 
 		p {
@@ -96,6 +90,10 @@
 	}
 
 	.info {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+
 		font-size: 0.8em;
 		opacity: 0.5;
 	}
