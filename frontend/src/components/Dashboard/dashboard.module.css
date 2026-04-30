@@ -10,11 +10,14 @@
 	height: 100vh;
 }
 
+.display-name,
 .vault {
 	display: inline-flex;
 	align-items: center;
 	justify-content: space-between;
+}
 
+.vault {
 	position: relative;
 	width: 100%;
 	font: inherit;
@@ -60,6 +63,14 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+	}
+
+	& .name {
+		max-width: 150px;
+
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
 	}
 
 	&.new .dropdown-toggle {

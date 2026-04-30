@@ -33,6 +33,7 @@ class Vault
 				emote: this.emote,
 				user_prompt: this.userPrompt,
 			})
+			.where('id', '=', this._id)
 			.execute();
 	}
 
@@ -41,7 +42,7 @@ class Vault
 		await Chat.getAllFromVault(this._id);
 	}
 
-	public static async register(name: string, emote: string)
+	public static async register(name: string, emote: string | null)
 	{
 		const { id, created_at } = await database.conn
 			.insertInto('vaults')

@@ -11,15 +11,15 @@ export default async function(req: Request, res: Response)
 {
 	const data: {
 		name: string;
-		emote: string;
 	} = req.body;
 
-	const newVault = await Vault.register(data.name, data.emote);
+	const newVault = await Vault.register(data.name, null);
 
 	res.json({
 		id: newVault.id,
 		name: newVault.name,
 		emote: newVault.emote,
+		user_prompt: newVault.userPrompt,
 		created_at: newVault.createdAt,
 	});
 }

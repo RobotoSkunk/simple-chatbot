@@ -17,6 +17,7 @@ export default async function(req: Request, res: Response)
 			id: vault.id,
 			name: vault.name,
 			emote: vault.emote,
+			user_prompt: vault.userPrompt,
 			created_at: vault.createdAt.getTime(),
 		}))
 	);

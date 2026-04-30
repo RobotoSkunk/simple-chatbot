@@ -53,6 +53,7 @@ class Chat
 				name: this.name,
 				color: this._color,
 			})
+			.where('id', '=', this._id)
 			.execute();
 	}
 

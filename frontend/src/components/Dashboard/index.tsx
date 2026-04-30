@@ -6,6 +6,10 @@ import {
 	useState,
 } from 'react';
 
+import {
+	useRouter,
+} from 'next/navigation';
+
 import Image from 'next/image';
 
 import {
@@ -14,9 +18,12 @@ import {
 
 import {
 	AnimatePresence,
-	LayoutGroup,
 	motion,
 } from 'framer-motion';
+
+import {
+	useImmer,
+} from 'use-immer';
 
 import {
 	ChatsContext,
@@ -31,6 +38,7 @@ import {
 } from '@/data/api';
 
 import ChatButton from '../ChatButton';
+import Modal from '../Modal';
 
 import style from './dashboard.module.css';
 
@@ -49,43 +57,52 @@ export default function Dashboard({
 	children: React.ReactNode;
 }>)
 {
-	const [ vaults, setVaults ] = useState<VaultData[]>([]);
+	const router = useRouter();
+
+	const [ vaults, setVaults ] = useImmer<VaultData[]>([]);
 	const [ vaultsOpen, setVaultsOpen ] = useState(false);
 	const [ currentVault, setCurrentVault ] = useState(0);
 
 	const [ chats, setChats ] = useState<ChatData[]>([]);
 
+	const [ modalEditVaultOpen, setModalEditVaultOpen ] = useState(false);
+
 	useEffect(() =>
 	{
 		(async () =>
 		{
-			let vaultId = '';
+			const response = await fetch(`${host}/vaults`);
+			const list = await response.json() as VaultData[];
 
-			{
-				const response = await fetch(`${host}/vaults`);
-				const list = await response.json() as VaultData[];
-
-				setVaults(list);
-
-				const storedVault = localStorage.getItem('current_vault') ?? '';
-				let vaultIndex = list.findIndex(v => v.id === storedVault);
-
-				if (vaultIndex < 0) {
-					vaultIndex = 0;
-				}
-
-				vaultId = list[vaultIndex].id;
-				setCurrentVault(vaultIndex);
-			}
-
-			{
-				const response = await fetch(`${host}/vault/${vaultId}/chats`);
-				const list = await response.json();
-
-				setChats(list);
-			}
+			setVaults(list);
 		})();
 	}, [ ]);
+
+	useEffect(() =>
+	{
+		if (!vaults[currentVault]) {
+			return;
+		}
+
+		(async () =>
+		{
+			let vaultId = vaults[currentVault].id;
+
+			const response = await fetch(`${host}/vault/${vaultId}/chats`);
+			const list = await response.json();
+
+			setChats(list);
+
+			const storedVault = localStorage.getItem('current_vault') ?? '';
+			let vaultIndex = vaults.findIndex(v => v.id === storedVault);
+
+			if (vaultIndex < 0) {
+				vaultIndex = 0;
+			}
+
+			setCurrentVault(vaultIndex);
+		})();
+	}, [ vaults, currentVault ]);
 
 	function updateChats(data: ChatData[])
 	{
@@ -121,24 +138,35 @@ export default function Dashboard({
 								setVaultsOpen(!vaultsOpen);
 							}}
 						>
-							{ vaults[currentVault]?.emote ?
-								<div
-									className={ style['vault-icon'] + ' ' + notoEmojiFont.className }
+							<AnimatePresence mode='wait'>
+								<motion.div
+									className={ style['display-name'] }
+									key={ vaults[currentVault]?.id }
+
+									initial={{ y: -35, opacity: 0 }}
+									animate={{ y: 0, opacity: 1 }}
+									exit={{ y: 35, opacity: 0 }}
 								>
-									{ vaults[currentVault].emote }
-								</div>
-								:
-								<Image
-									src={ vaultIcon }
-									alt=''
-									width={ 20 }
-									height={ 20 }
-									className={ style['vault-icon'] }
-								/>
-							}
-							<span>
-								{ vaults[currentVault]?.name }
-							</span>
+									{ vaults[currentVault]?.emote ?
+										<div
+											className={ style['vault-icon'] + ' ' + notoEmojiFont.className }
+										>
+											{ vaults[currentVault].emote }
+										</div>
+										:
+										<Image
+											src={ vaultIcon }
+											alt=''
+											width={ 20 }
+											height={ 20 }
+											className={ style['vault-icon'] }
+										/>
+									}
+									<span className={ style.name }>
+										{ vaults[currentVault]?.name }
+									</span>
+								</motion.div>
+							</AnimatePresence>
 							<div className={ style.space }></div>
 							<motion.div
 								className={ style.arrow }
@@ -157,6 +185,7 @@ export default function Dashboard({
 						<div>
 							<button
 								className={ style['vault-options'] }
+								onClick={ () => setModalEditVaultOpen(true) }
 							>
 								<div></div>
 								<Image
@@ -168,72 +197,162 @@ export default function Dashboard({
 								/>
 							</button>
 						</div>
-						<motion.div
-							className={ style.vaults }
-							animate={{
-								height: vaultsOpen ? 'auto' : 0,
-							}}
-						>
-							{ vaults.map((v) => (
-								<div
-									className={ style.vault }
-									key={ v.id }
+						<AnimatePresence>
+							{ vaultsOpen &&
+								<motion.div
+									className={ style.vaults }
+
+									initial={{ height: 0 }}
+									animate={{ height: 'auto' }}
+									exit={{ height: 0 }}
 								>
-									<button
-										className={ style['dropdown-toggle'] }
-										onClick={() =>
-										{
-											setVaultsOpen(false);
-										}}
-									>
-										{ v.emote ?
-											<div
-												className={ style['vault-icon'] + ' ' + notoEmojiFont.className }
+									{ vaults.map((v) => (
+										<div
+											className={ style.vault }
+											key={ v.id }
+										>
+											<button
+												className={ style['dropdown-toggle'] }
+												onClick={() =>
+												{
+													localStorage.setItem('current_vault', v.id);
+													let vaultIndex = vaults.findIndex(vi => vi.id === v.id);
+
+													if (vaultIndex < 0) {
+														vaultIndex = 0;
+													}
+
+													setCurrentVault(vaultIndex);
+													setVaultsOpen(false);
+												}}
 											>
-												{ v.emote }
-											</div>
-											:
+												{ v.emote ?
+													<div
+														className={ style['vault-icon'] + ' ' + notoEmojiFont.className }
+													>
+														{ v.emote }
+													</div>
+													:
+													<Image
+														src={ vaultIcon }
+														alt=''
+														width={ 20 }
+														height={ 20 }
+														className={ style['vault-icon'] }
+													/>
+												}
+												<span className={ style.name }>
+													{ v.name }
+												</span>
+												<div className={ style.space }></div>
+											</button>
+										</div>
+									)) }
+									<div
+										className={ style.vault + ' ' + style.new }
+									>
+										<button
+											className={ style['dropdown-toggle'] }
+											onClick={ async () => {
+												const newVaultName = prompt('Enter the name for your new vault.', 'New Vault');
+
+												if (!newVaultName) {
+													setVaultsOpen(false);
+													return;
+												}
+
+												const response = await fetch(`${host}/vault`, {
+													method: 'POST',
+													headers: {
+														'Content-Type': 'application/json',
+													},
+													body: JSON.stringify({
+														name: newVaultName,
+													}),
+												});
+
+												const json = await response.json() as VaultData;
+
+												setVaults([
+													...vaults,
+													json,
+												]);
+												localStorage.setItem('current_vault', json.id);
+
+												router.push('/');
+												setVaultsOpen(false);
+											}}
+										>
 											<Image
-												src={ vaultIcon }
+												src={ plusIcon }
 												alt=''
-												width={ 20 }
-												height={ 20 }
-												className={ style['vault-icon'] }
+												width={ 25 }
+												height={ 25 }
 											/>
-										}
-										<span>
-											{ v.name }
-										</span>
-										<div className={ style.space }></div>
-									</button>
-								</div>
-							)) }
-							<div
-								className={ style.vault + ' ' + style.new }
-							>
-								<button
-									className={ style['dropdown-toggle'] }
-									onClick={() => {
-										setVaultsOpen(false);
-									}}
-								>
-									<Image
-										src={ plusIcon }
-										alt=''
-										width={ 25 }
-										height={ 25 }
-									/>
-									<span>
-										New Vault
-									</span>
-								</button>
-							</div>
-						</motion.div>
+											<span>
+												New Vault
+											</span>
+										</button>
+									</div>
+								</motion.div>
+							}
+						</AnimatePresence>
 					</div>
 				</div>
 				<main>
 					{ children }
 				</main>
+				{ vaults[currentVault] &&
+					<Modal
+						open={ modalEditVaultOpen }
+						onCloseRequest={ () => setModalEditVaultOpen(false) }
+					>
+						<form
+							onSubmit={ async (ev) => {
+								ev.preventDefault();
+								const form = new FormData(ev.currentTarget);
+
+								const response = await fetch(`${host}/vault/${vaults[currentVault].id}`, {
+									method: 'PATCH',
+									headers: {
+										'Content-Type': 'application/json',
+									},
+									body: JSON.stringify({
+										name: form.get('name'),
+										user_prompt: form.get('user-prompt'),
+									}),
+								});
+
+								const json = await response.json() as { success: boolean };
+
+								if (json.success) {
+									setVaults(v => {
+										const vault = v[currentVault];
+
+										vault.name = form.get('name') as string;
+										vault.user_prompt = form.get('user-prompt') as string;
+									});
+
+									setModalEditVaultOpen(false);
+								}
+							} }
+						>
+							<input type='text' name='name' defaultValue={ vaults[currentVault].name }/>
+							<textarea name='user-prompt' defaultValue={ vaults[currentVault].user_prompt }/>
+							<button>
+								Save
+							</button>
+							<button
+								onClick={ (ev) => {
+									ev.preventDefault();
+									setModalEditVaultOpen(false);
+								} }
+							>
+								Cancel
+							</button>
+						</form>
+					</Modal>
+				}
 			</ChatsContext.Provider>
 		</VaultsContext.Provider>
 	);

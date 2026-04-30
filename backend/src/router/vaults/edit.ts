@@ -14,6 +14,7 @@ export default async function(req: Request, res: Response)
 	const data: {
 		name?: string;
 		emote?: string;
+		user_prompt?: string;
 	} = req.body;
 
 	const vault = await Vault.getById(vaultId);
@@ -31,6 +32,10 @@ export default async function(req: Request, res: Response)
 
 	if (data.emote) {
 		vault.emote = data.emote;
+	}
+
+	if (data.user_prompt) {
+		vault.userPrompt = data.user_prompt;
 	}
 
 	await vault.syncToDatabase();

@@ -20,5 +20,5 @@ export default function Home()
 		return <></>;
 	}
 
-	return <Chat vaultId={ vaultsContext.data[0].id }/>;
+	return <Chat vaultId={ vaultsContext.data[vaultsContext.currentVault].id }/>;
 }

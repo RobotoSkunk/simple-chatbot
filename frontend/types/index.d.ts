@@ -6,6 +6,7 @@ declare global
 		id: string;
 		name: string;
 		emote: string;
+		user_prompt: string;
 		created_at: number;
 	}
 
