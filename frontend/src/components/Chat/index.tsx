@@ -6,6 +6,7 @@ import {
 	useEffect,
 	useContext,
 	useState,
+	useLayoutEffect,
 } from 'react';
 
 import {
@@ -63,6 +64,7 @@ export default function Chat({
 	const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
 	const [ messages, setMessages ] = useImmer<MessageData[]>([]);
+	const [ firstLoad, setFirstLoad ] = useState(true);
 	const [ busy, setBusy ] = useState(false);
 	const [ status, setStatus ] = useState<ChunkStatusTypes>('thinking');
 
@@ -102,13 +104,17 @@ export default function Chat({
 		}
 	}, [ ]);
 
-	useEffect(() =>
+	useLayoutEffect(() =>
 	{
 		if (messagesContainerRef.current) {
 			messagesContainerRef.current.scrollTo({
 				top: messagesContainerRef.current.scrollHeight,
-				behavior: 'smooth',
+				behavior: firstLoad ? 'instant' :'smooth',
 			});
+
+			if (messages.length > 0) {
+				setFirstLoad(false);
+			}
 		}
 	}, [ messages ]);
 
