@@ -11,6 +11,12 @@
 
 	&.welcome {
 		justify-content: center;
+
+		& .tess {
+			position: absolute;
+			bottom: 580px;
+			scale: 1.3;
+		}
 	}
 }
 
@@ -45,7 +51,6 @@
 	justify-content: center;
 
 	width: 100%;
-	/* min-height: 100px; */
 }
 
 .input {
@@ -118,6 +123,11 @@
 	}
 }
 
+.empty {
+	opacity: 0.5;
+	font-style: italic;
+}
+
 .loader {
 	display: flex;
 	gap: 6px;
@@ -150,11 +160,6 @@
 
 .spinner {
 	animation: 1s linear 0s infinite forwards spinner;
-}
-
-.empty {
-	opacity: 0.5;
-	font-style: italic;
 }
 
 @keyframes loading-dot {

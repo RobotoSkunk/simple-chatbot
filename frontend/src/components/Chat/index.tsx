@@ -40,6 +40,7 @@ import Image from 'next/image';
 
 import Message from '@/components/Message';
 import DottedDiv from '@/components/DottedDiv';
+import TeSS from '@/components/TeSS';
 
 import style from './chat.module.css';
 
@@ -459,9 +460,13 @@ export default function Chat({
 				</DottedDiv>
 			</>}
 
-			{ !chatId &&
+			{ !chatId && <>
+				<TeSS
+					followCursor
+					className={ style.tess }
+				/>
 				<h1>How can I help you today?</h1>
-			}
+			</> }
 
 			<DottedDiv
 				color='var(--background)'
