@@ -9,11 +9,20 @@ import {
 
 import {
 	motion,
+	Transition,
 } from 'framer-motion';
 
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const clamp = (x: number, min: number, max: number) => x < min ? min : (x > max ? max : x);
+
+const smoothTransition = {
+	type: 'spring',
+	stiffness: 500,
+	damping: 30,
+} satisfies Transition;
+
+const debugPointer = false;
 
 export default function TeSS({
 	followCursor,
@@ -27,7 +36,9 @@ export default function TeSS({
 	const [ blinkDelta, setBlinkDelta ] = useState(0);
 	const [ mouseXDelta, setMouseXDelta ] = useState(0);
 	const [ mouseYDelta, setMouseYDelta ] = useState(0);
+
 	const svgRef = useRef<SVGGElement | null>(null);
+	const dotRef = useRef<HTMLDivElement | null>(null);
 
 	async function blinkLoop()
 	{
@@ -40,38 +51,82 @@ export default function TeSS({
 		blinkLoop();
 	}
 
+	function moveEyes(targetX: number, targetY: number)
+	{
+		if (!svgRef.current) {
+			return;
+		}
+
+		const svg = svgRef.current;
+		const box = svg.getBoundingClientRect();
+
+		const middleX = box.x + box.width / 2;
+		const middleY = box.y + box.height / 2;
+
+		setMouseXDelta(clamp((targetX - middleX) / 760 * 4, -4, 4));
+		setMouseYDelta(clamp((targetY - middleY) / 760 * 4, -4, 4));
+
+		if (debugPointer && dotRef.current) {
+			dotRef.current.style.left = `${targetX}px`;
+			dotRef.current.style.top = `${targetY}px`;
+		}
+	}
+
 	useEffect(() => {
 		setId(crypto.randomUUID());
 		blinkLoop();
 
+		const textarea = document.querySelector('textarea');
+
 		function onMouseMove(ev: MouseEvent)
 		{
-			if (!svgRef.current) {
+			moveEyes(ev.x, ev.y);
+		}
+
+		function onInput(ev: InputEvent)
+		{
+			const target = ev.target as HTMLTextAreaElement;
+			const inputRect = target.getBoundingClientRect();
+
+			const targetPos = {
+				x: inputRect.x + inputRect.width - 20,
+				y: inputRect.y + inputRect.height - 20,
+			}
+
+			const caret = document.caretPositionFromPoint(targetPos.x, targetPos.y);
+			if (!caret) {
 				return;
 			}
 
-			const svg = svgRef.current;
-			const box = svg.getBoundingClientRect();
+			const caretRect = caret.getClientRect();
 
-			const middleX = box.x + box.width / 2;
-			const middleY = box.y + box.height / 2;
+			if (!caretRect) {
+				return;
+			}
 
-			setMouseXDelta(clamp((ev.x - middleX) / 760 * 4, -4, 4));
-			setMouseYDelta(clamp((ev.y - middleY) / 760 * 4, -4, 4));
+			moveEyes(caretRect.x, caretRect.y);
 		}
 
 		if (followCursor) {
 			document.addEventListener('mousemove', onMouseMove);
 		}
 
+		if (textarea) {
+			textarea.addEventListener('input', onInput);
+		}
+
 		return () => {
 			if (followCursor) {
 				document.removeEventListener('mousemove', onMouseMove);
 			}
+
+			if (textarea) {
+				textarea.removeEventListener('input', onInput);
+			}
 		};
 	}, [ ]);
 
-	return (
+	return (<>
 		<svg
 			width='100mm'
 			height='100mm'
@@ -234,6 +289,8 @@ export default function TeSS({
 					x: mouseXDelta,
 					y: mouseYDelta,
 				}}
+
+				transition={ smoothTransition }
 			>	
 				<circle
 					style={{ fill: 'var(--background)' }}
@@ -248,6 +305,7 @@ export default function TeSS({
 						animate={{
 							y: `${blinkDelta * -50}%`,
 						}}
+						transition={ smoothTransition }
 						style={{ fill: '#ffc747' }}
 						width='16.030249'
 						height='12.027092'
@@ -264,6 +322,7 @@ export default function TeSS({
 						animate={{
 							y: `${blinkDelta * 50}%`,
 						}}
+						transition={ smoothTransition }
 						style={{ fill: '#ffc747' }}
 						width='16.030249'
 						height='12.027092'
@@ -277,6 +336,8 @@ export default function TeSS({
 					x: mouseXDelta * 0.68,
 					y: mouseYDelta * 0.68,
 				}}
+
+				transition={ smoothTransition }
 			>	
 				<circle
 					style={{ fill: 'var(--background)' }}
@@ -291,6 +352,7 @@ export default function TeSS({
 						animate={{
 							y: `${blinkDelta * -50}%`,
 						}}
+						transition={ smoothTransition }
 						style={{ fill: '#ffc747' }}
 						width='11.648355'
 						height='8.7783918'
@@ -307,6 +369,7 @@ export default function TeSS({
 						animate={{
 							y: `${blinkDelta * 50}%`,
 						}}
+						transition={ smoothTransition }
 						style={{ fill: '#ffc747' }}
 						width='11.648355'
 						height='8.7783918'
@@ -362,5 +425,19 @@ export default function TeSS({
 				</g>
 			</motion.g>
 		</svg>
-	);
+		{ debugPointer &&
+			<div
+				ref={ dotRef }
+				style={{
+					display: 'block',
+					width: 5,
+					height: 5,
+					position: 'fixed',
+					zIndex: 9999,
+					background: 'red',
+					pointerEvents: 'none',
+				}}
+			/>
+		}
+	</>);
 }
