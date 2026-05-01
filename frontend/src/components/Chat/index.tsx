@@ -467,10 +467,12 @@ export default function Chat({
 			</>}
 
 			{ !chatId && <>
-				<TeSS
-					followCursor
-					className={ style.tess }
-				/>
+				<div style={{ position: 'relative' }}>
+					<TeSS
+						followCursor
+						className={ style.tess }
+					/>
+				</div>
 				<h1>How can I help you today?</h1>
 			</> }
 

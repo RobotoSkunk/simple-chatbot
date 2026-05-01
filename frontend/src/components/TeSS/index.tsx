@@ -20,7 +20,7 @@ export default function TeSS({
 	className,
 }: {
 	followCursor?: boolean;
-	className?: string,
+	className?: string;
 })
 {
 	const [ id, setId ] = useState('');
