@@ -71,6 +71,8 @@ export default function Chat({
 
 	useEffect(() =>
 	{
+		resize();
+
 		if (window.chatbotMessage) {
 			const message = window.chatbotMessage;
 			window.chatbotMessage = undefined;
@@ -296,17 +298,14 @@ export default function Chat({
 			return;
 		}
 
-		textAreaRef.current.style.height = 'auto';
+		textAreaRef.current.style.height = '';
+		let height = textAreaRef.current.scrollHeight - 20; // 20 is the padding size
 
-		if (textAreaRef.current.value.indexOf('\n') >= 0) {
-			let height = textAreaRef.current.scrollHeight;
-
-			if (height > 350) {
-				height = 350
-			}
-
-			textAreaRef.current.style.height = height + 'px';
+		if (height > 350) {
+			height = 350
 		}
+
+		textAreaRef.current.style.height = height + 'px';
 	}
 
 
