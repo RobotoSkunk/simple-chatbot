@@ -58,7 +58,6 @@ export default function Chat({
 	const router = useRouter();
 
 	const chatsContext = useContext(ChatsContext);
-	// const vaultsContext = useContext(VaultsContext);
 	const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 	const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -236,10 +235,8 @@ export default function Chat({
 		}
 	}
 
-	async function onSendClick(ev: React.MouseEvent<HTMLButtonElement, MouseEvent>)
+	async function onSendClick()
 	{
-		ev.preventDefault();
-
 		if (!textAreaRef.current) {
 			return;
 		}
@@ -475,7 +472,13 @@ export default function Chat({
 						ref={ textAreaRef }
 						rows={ 1 }
 						disabled={ !chatId && busy }
-						onInput={ () => resize() }
+						onInput={ resize }
+						onKeyDown={ (ev) => {
+							if (!ev.shiftKey && ev.key.toLowerCase() === 'enter') {
+								onSendClick();
+							}
+						} }
+
 						className='default'
 					/>
 					<button
