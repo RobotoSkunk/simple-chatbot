@@ -13,7 +13,7 @@ import {
 } from 'framer-motion';
 
 
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+// const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const clamp = (x: number, min: number, max: number) => x < min ? min : (x > max ? max : x);
 
 const smoothTransition = {
@@ -36,19 +36,31 @@ export default function TeSS({
 	const [ blinkDelta, setBlinkDelta ] = useState(0);
 	const [ mouseXDelta, setMouseXDelta ] = useState(0);
 	const [ mouseYDelta, setMouseYDelta ] = useState(0);
+	const [ blinkTimeoutId, setBlinkTimeoutId ] = useState<NodeJS.Timeout | null>(null);
 
 	const svgRef = useRef<SVGGElement | null>(null);
 	const dotRef = useRef<HTMLDivElement | null>(null);
 
-	async function blinkLoop()
+	function blinkLoop()
 	{
-		await wait(5000 + Math.random() * 5000);
-		setBlinkDelta(1);
+		wait(() =>
+		{
+			setBlinkDelta(1);
 
-		await wait(150 + Math.random() * 150);
-		setBlinkDelta(0);
+			wait(() =>
+			{
+				setBlinkDelta(0);
 
-		blinkLoop();
+				blinkLoop();
+			}, 150 + Math.random() * 150);
+		}, 150 + Math.random() * 10000);
+	}
+
+	function wait(callback: () => void, ms: number)
+	{
+		setBlinkTimeoutId(
+			setTimeout(callback, ms)
+		);
 	}
 
 	function moveEyes(targetX: number, targetY: number)
@@ -116,6 +128,10 @@ export default function TeSS({
 		}
 
 		return () => {
+			if (blinkTimeoutId) {
+				clearTimeout(blinkTimeoutId);
+			}
+
 			if (followCursor) {
 				document.removeEventListener('mousemove', onMouseMove);
 			}
