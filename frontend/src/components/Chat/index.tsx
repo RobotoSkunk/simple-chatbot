@@ -17,16 +17,24 @@ import {
 } from 'next/navigation';
 
 import {
-	ChatsContext,
-} from '@/contexts/chats';
+	motion,
+} from 'framer-motion';
 
 import {
 	type ReadableStream,
 } from 'stream/web';
 
 import {
+	ChatsContext,
+} from '@/contexts/chats';
+
+import {
 	host,
 } from '@/data/api';
+
+import {
+	smooth,
+} from '@/data/transitions';
 
 import Image from 'next/image';
 
@@ -303,10 +311,16 @@ export default function Chat({
 
 
 	return (
-		<div className={ [
-			style.container,
-			!chatId ? style.welcome : '',
-		].join(' ') }>
+		<motion.div
+			initial={{ y: -20, opacity: 0 }}
+			animate={{ y: 0, opacity: 1 }}
+			transition={ smooth }
+
+			className={ [
+				style.container,
+				!chatId ? style.welcome : '',
+			].join(' ') }
+		>
 			{ chatId && <>
 				<div
 					className={ style.messages }
@@ -488,6 +502,6 @@ export default function Chat({
 					</button>
 				</div>
 			</DottedDiv>
-		</div>
+		</motion.div>
 	);
 }

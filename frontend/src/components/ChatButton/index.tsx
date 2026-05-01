@@ -19,6 +19,10 @@ import {
 	host,
 } from '@/data/api';
 
+import {
+	smooth,
+} from '@/data/transitions';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import Dropdown from '../Dropdown';
@@ -118,6 +122,7 @@ export default function ChatButton({
 			animate='show'
 			exit='hide'
 			variants={ variants }
+			transition={ smooth }
 
 			className={ style.chatbutton }
 			key={ chatId }

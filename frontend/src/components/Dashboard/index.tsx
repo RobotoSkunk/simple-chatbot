@@ -38,6 +38,10 @@ import {
 	host,
 } from '@/data/api';
 
+import {
+	smooth,
+} from '@/data/transitions';
+
 import ChatButton from '../ChatButton';
 import Modal from '../Modal';
 
@@ -149,6 +153,7 @@ export default function Dashboard({
 									initial={{ y: -35, opacity: 0 }}
 									animate={{ y: 0, opacity: 1 }}
 									exit={{ y: 35, opacity: 0 }}
+									transition={ smooth }
 								>
 									{ vaults[currentVault]?.emote ?
 										<div
