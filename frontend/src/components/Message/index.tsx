@@ -37,10 +37,12 @@ import penIcon from '@/assets/icons/pen.svg';
 function ButtonIcon({
 	src,
 	alt,
+	disabled,
 	onClick,
 }: {
 	src: string | StaticImageData;
 	alt: string;
+	disabled?: boolean;
 	onClick: (ev: React.MouseEvent<HTMLButtonElement, MouseEvent>) => Promise<void>;
 })
 {
@@ -48,6 +50,7 @@ function ButtonIcon({
 		<button
 			className={ style['button-icon'] + ' default' }
 			onClick={ onClick }
+			disabled={ disabled }
 		>
 			<div></div>
 			<Image
@@ -70,7 +73,7 @@ export default function Message({
 	contentIndex,
 	contentCount,
 	editedByUser,
-	hideTeSS,
+	isBusy,
 
 	onRegenerate,
 	onEdit,
@@ -85,7 +88,7 @@ export default function Message({
 	contentIndex: number;
 	contentCount: number;
 	editedByUser: boolean;
-	hideTeSS?: boolean;
+	isBusy?: boolean;
 
 	onRegenerate: () => Promise<void>;
 	onEdit: (newContent: string) => void;
@@ -199,6 +202,7 @@ export default function Message({
 								<ButtonIcon
 									src={ leftIcon }
 									alt='Load previous generated message'
+									disabled={ isBusy }
 									onClick={ async () => await switchIndex(-1) }
 								/>
 								<span>
@@ -207,6 +211,7 @@ export default function Message({
 								<ButtonIcon
 									src={ rightIcon }
 									alt='Load next generated message'
+									disabled={ isBusy }
 									onClick={ async () => await switchIndex(1) }
 								/>
 							</div>
@@ -216,6 +221,7 @@ export default function Message({
 								<ButtonIcon
 									src={ checkIcon }
 									alt='Confirm changes'
+									disabled={ isBusy }
 									onClick={ async () => {
 										const newContent = textareaRef.current?.value ?? content;
 
@@ -243,6 +249,7 @@ export default function Message({
 								<ButtonIcon
 									src={ crossIcon }
 									alt='Cancel changes'
+									disabled={ isBusy }
 									onClick={ async () => setEditing(false) }
 								/>
 							</> : <>
@@ -250,17 +257,20 @@ export default function Message({
 									<ButtonIcon
 										src={ refreshIcon }
 										alt='Regenerate message'
+										disabled={ isBusy }
 										onClick={ onRegenerate }
 									/>
 								}
 								<ButtonIcon
 									src={ editIcon }
 									alt='Edit message'
+									disabled={ isBusy }
 									onClick={ async () => setEditing(true) }
 								/>
 								<ButtonIcon
 									src={ trashIcon }
 									alt='Delete message'
+									disabled={ isBusy }
 									onClick={ async () => {
 										const confirmation = confirm(
 											`Are you sure you want to delete this chat?\n\nThis can't be undone.`

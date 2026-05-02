@@ -341,7 +341,7 @@ export default function Chat({
 								key={ v.id }
 								createdAt={ new Date(v.created_at) }
 								role={ v.role }
-								hideTeSS={ i < messages.length - 1 }
+								isBusy={ busy }
 
 								messageId={ v.id }
 								content={ v.content }
