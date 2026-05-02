@@ -119,7 +119,7 @@ export default function Chat({
 		}
 	}, [ messages ]);
 
-	async function sendMessage(content: string)
+	async function sendMessage(content?: string)
 	{
 		const message: MessageData = {
 			id: ':new_assistant',
@@ -147,6 +147,11 @@ export default function Chat({
 				},
 				message,
 			]);
+		} else {
+			setMessages([
+				...messages,
+				message,
+			]);
 		}
 
 		const response = await fetch(`${host}/vault/${vaultId}/chat/${chatId}/message`, {
@@ -161,20 +166,16 @@ export default function Chat({
 			const stream = response.body.pipeThrough(new TextDecoderStream('utf-8')) as ReadableStream;
 
 			for await (const value of stream) {
-				const parts: string[] = value.split('\n');
+				const parts: string[] = (value as string).split('\n').filter(v => Boolean(v));
 
 				for (const part of parts) {
-					if (!part || part === ':heartbeat') {
-						continue;
-					}
-
 					let data: ChunkResponse;
 
 					try {
 						data = JSON.parse(part);
 					} catch (error) {
 						console.warn('Illegal JSON', error);
-						console.log(part);
+						console.log(value, part);
 						continue;
 					}
 
@@ -192,7 +193,6 @@ export default function Chat({
 
 							break;
 						}
-
 						case 'end': {
 							setStatus('none');
 
@@ -214,7 +214,6 @@ export default function Chat({
 							}
 							break;
 						}
-
 						case 'user_message_data': {
 							if (!content) {
 								break;
@@ -230,13 +229,16 @@ export default function Chat({
 
 							break;
 						}
-
 						case 'status': {
-							if (!content) {
-								break;
-							}
-
 							setStatus(data.status);
+							break;
+						}
+						case 'error': {
+							const messageIndex = messages.findIndex(m => m.id === ':new_assistant');
+							const messagesCopy = [... messages];
+							messagesCopy.splice(messageIndex, 1);
+
+							setMessages(messagesCopy);
 							break;
 						}
 					}
@@ -402,10 +404,6 @@ export default function Chat({
 											const parts: string[] = value.split('\n');
 
 											for (const part of parts) {
-												if (!part || part === ':heartbeat') {
-													continue;
-												}
-
 												let data: ChunkResponse;
 
 												try {
@@ -429,15 +427,21 @@ export default function Chat({
 														});
 														break;
 													}
-
 													case 'end': {
 														setBusy(false);
 														setStatus('none');
 														break;
 													}
-
 													case 'status': {
 														setStatus(data.status);
+														break;
+													}
+													case 'error': {
+														const messagesCopy = [... messages];
+														const messageIndex = messagesCopy.findIndex(m => m.id === ':new_assistant');
+														messagesCopy.splice(messageIndex, 1);
+
+														setMessages(messagesCopy);
 														break;
 													}
 												}

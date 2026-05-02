@@ -137,7 +137,7 @@ export default function getAskMiddleware(isNewMessage: boolean)
 			sendDataChunk({
 				type: 'user_message_data',
 				message_id: newMessage.id,
-			})
+			});
 		}
 
 		async function callFunctionAddMessage(
@@ -209,12 +209,14 @@ export default function getAskMiddleware(isNewMessage: boolean)
 								});
 
 								await callFunctionAddMessage(name, JSON.stringify(searchResponse), thinking, call.function.arguments);
-								await generate();
 							} catch (error) {
 								console.error(error);
 
-								sendDataChunk({ type: 'error' });
-								res.end();
+								await callFunctionAddMessage(name, JSON.stringify({
+									error: 'something went wrong when trying to execute web_search'
+								}), thinking, call.function.arguments);
+							} finally {
+								await generate();
 							}
 							break;
 						}
@@ -223,18 +225,20 @@ export default function getAskMiddleware(isNewMessage: boolean)
 							const arg = call.function.arguments as { url: string };
 							sendDataChunk({ type: 'status', status: 'web_search' });
 
-							const searchResponse = await ollama.webFetch({
-								url: arg.url
-							});
-
 							try{
+								const searchResponse = await ollama.webFetch({
+									url: arg.url,
+								});
+
 								await callFunctionAddMessage(name, JSON.stringify(searchResponse), thinking, call.function.arguments);
-								await generate();
 							} catch (error) {
 								console.error(error);
 
-								sendDataChunk({ type: 'error' });
-								res.end();
+								await callFunctionAddMessage(name, JSON.stringify({
+									error: 'something went wrong when trying to execute web_fetch'
+								}), thinking, call.function.arguments);
+							} finally {
+								await generate();
 							}
 							break;
 						}
