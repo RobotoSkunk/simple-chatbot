@@ -183,6 +183,8 @@ export default function Chat({
 
 					switch (data.type) {
 						case 'writing': {
+							setStatus('typing');
+
 							setMessages(m => {
 								const msg = m.find(m => m.id === ':new_assistant');
 
@@ -190,7 +192,6 @@ export default function Chat({
 									msg.content += data.token;
 								}
 							});
-
 							break;
 						}
 						case 'end': {
@@ -418,6 +419,8 @@ export default function Chat({
 
 												switch (data.type) {
 													case 'writing': {
+														setStatus('typing');
+
 														setMessages(m => {
 															const msg = m.find(m => m.id === v.id);
 

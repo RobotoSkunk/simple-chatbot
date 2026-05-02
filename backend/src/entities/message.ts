@@ -122,6 +122,18 @@ class Message
 		this._editedByUser = editedByUser ? 1 : 0;
 	}
 
+	public async overrideContent(content: string, generationTime: number)
+	{
+		await database.conn
+			.updateTable('message_contents')
+			.set({
+				content,
+				generation_time: generationTime,
+			})
+			.where('id', '=', this._contentId)
+			.execute();
+	}
+
 	public async loadContent(index: number)
 	{
 		const contentData = await database.conn

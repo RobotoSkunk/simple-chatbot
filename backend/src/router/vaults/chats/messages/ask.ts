@@ -19,7 +19,6 @@ import {
 import Message from '../../../../entities/message';
 import Chat from '../../../../entities/chat';
 
-
 const tools: Tool[] = [
 	{
 		type: 'function',
@@ -166,7 +165,10 @@ export default function getAskMiddleware(isNewMessage: boolean)
 			);
 		}
 
+		const maxSaveTick = 10;
+		let saveTick = maxSaveTick;
 		let thinkingPing: NodeJS.Timeout | undefined = undefined;
+		let finalContent = '';
 
 		async function generate()
 		{
@@ -255,9 +257,23 @@ export default function getAskMiddleware(isNewMessage: boolean)
 
 				if (chunk.message.content) {
 					const token = chunk.message.content;
-
 					content += token;
 					sendDataChunk({ type: 'writing', token });
+
+					finalContent += token;
+
+					// Save and update assistant's message content
+					if (!dbMessage) {
+						dbMessage = await Message.register(
+							chat.id,
+							'assistant',
+							finalContent,
+							0
+						);
+					} else if (--saveTick < 0) {
+						saveTick = maxSaveTick;
+						await dbMessage.overrideContent(finalContent, 0);
+					}
 
 					if (thinkingPing) {
 						clearInterval(thinkingPing);
@@ -269,17 +285,21 @@ export default function getAskMiddleware(isNewMessage: boolean)
 				}
 			}
 
-
 			if (isNewMessage) {
 				let newMessage = 'no-response';
 
 				if (content.length > 0) {
-					const tmpMessage = await addMessage({
-						role: 'assistant',
-						content,
-					});
+					if (!dbMessage) {
+						dbMessage = await addMessage({
+							role: 'assistant',
+							content: finalContent,
+						}, totalDuration);
 
-					newMessage = tmpMessage.id;
+						newMessage = dbMessage.id;
+					} else {
+						await dbMessage.overrideContent(finalContent, totalDuration);
+						newMessage = dbMessage.id;
+					}
 				}
 
 				sendDataChunk({
