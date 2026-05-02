@@ -1,0 +1,144 @@
+
+.container,
+.container > div,
+.container form {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.container {
+	position: fixed;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+
+	font-size: 1.1em;
+
+	& input,
+	& button {
+		font-size: 1.3em;
+		padding: 8px 42px;
+		border-radius: 25px;
+	}
+
+	& form {
+		gap: 14px;
+		margin-top: 30px;
+
+		& input {
+			border-top-right-radius: 0;
+			border-bottom-right-radius: 0;
+
+			border-right: 0;
+			margin: 0;
+		}
+
+		& .input {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		& .action {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+
+			width: 50px;
+			height: 45px;
+
+			padding: 0;
+			border: var(--border);
+			border-radius: 0 25px 25px 0;
+			background: var(--button-background);
+			cursor: pointer;
+
+			transition: background 0.2s ease;
+
+			&:hover,
+			&:focus-visible,
+			&.active {
+				background: var(--button-background-focus);
+			}
+		}
+	}
+
+	& label {
+		position: relative;
+		margin-top: 20px;
+
+		& input {
+			padding: 8px 20px;
+			font-size: 1.1em;
+			width: 300px;
+			padding-right: 8px;
+		}
+
+		& span {
+			position: absolute;
+			top: 0;
+			left: 10px;
+
+			transform: translateY(-120%);
+		}
+	}
+}
+
+.tess-container {
+	position: relative;
+	pointer-events: none;
+	height: 100px;
+
+	& .tess {
+		position: absolute;
+		left: 50%;
+		bottom: -80px;
+		transform: translateX(-50%);
+	}
+}
+
+.score {
+	position: relative;
+
+	margin-top: 10px;
+	margin-bottom: 50px;
+	background: #475569;
+	border-radius: 3px;
+
+	width: 300px;
+	height: 5px;
+
+	& div {
+		width: 50%;
+		height: 100%;
+ 		border-radius: 3px;
+	}
+
+	& span {
+		position: absolute;
+		left: 10px;
+		top: 10px;
+		font-size: 0.9em;
+	}
+}
+
+.info {
+	position: absolute;
+	left: calc(100% + 10px);
+	top: calc(50% + 10px);
+
+	width: 380px;
+	padding: 0px 15px;
+
+	background: var(--button-background);
+	border: var(--border);
+	border-radius: 8px;
+	z-index: 10;
+
+	& ul {
+		padding-left: 15px;
+	}
+}
