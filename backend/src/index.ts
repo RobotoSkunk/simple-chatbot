@@ -12,12 +12,11 @@ import {
 
 import database from './client/database';
 
-
 (async () =>
 {
 	try {
 		await database.tryMigrateToLatest();
-		await database.prepare();
+		// await database.prepare();
 
 	} catch (error) {
 		console.error(error);
