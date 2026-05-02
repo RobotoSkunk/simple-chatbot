@@ -217,16 +217,7 @@
 		}
 	}
 
-	&.role-assistant {
-		& > img {
-			position: relative;
-			border-radius: 50%;
-
-			transform: translateY(25%);
-		}
-
-		& .message {
-			border-bottom-left-radius: 0;
-		}
+	&.role-assistant .message {
+		border-bottom-left-radius: 0;
 	}
 }

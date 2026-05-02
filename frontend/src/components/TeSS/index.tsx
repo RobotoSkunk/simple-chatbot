@@ -25,10 +25,10 @@ const smoothTransition = {
 const debugPointer = false;
 
 export default function TeSS({
-	followCursor,
+	backgroundColor = 'var(--background)',
 	className,
 }: {
-	followCursor?: boolean;
+	backgroundColor?: string;
 	className?: string;
 })
 {
@@ -88,7 +88,7 @@ export default function TeSS({
 		setId(crypto.randomUUID());
 		blinkLoop();
 
-		const textarea = document.querySelector('textarea');
+		const textarea = document.getElementById('main-input') as HTMLTextAreaElement;
 
 		function onMouseMove(ev: MouseEvent)
 		{
@@ -119,9 +119,7 @@ export default function TeSS({
 			moveEyes(caretRect.x, caretRect.y);
 		}
 
-		if (followCursor) {
-			document.addEventListener('mousemove', onMouseMove);
-		}
+		document.addEventListener('mousemove', onMouseMove);
 
 		if (textarea) {
 			textarea.addEventListener('input', onInput);
@@ -132,9 +130,7 @@ export default function TeSS({
 				clearTimeout(blinkTimeoutId);
 			}
 
-			if (followCursor) {
-				document.removeEventListener('mousemove', onMouseMove);
-			}
+			document.removeEventListener('mousemove', onMouseMove);
 
 			if (textarea) {
 				textarea.removeEventListener('input', onInput);
@@ -200,7 +196,7 @@ export default function TeSS({
 					<circle
 						style={{
 							fill: '#ffc747',
-							stroke: 'var(--background)',
+							stroke: backgroundColor,
 							strokeWidth: 10,
 							paintOrder: 'stroke fill markers',
 						}}
@@ -251,7 +247,7 @@ export default function TeSS({
 					<circle
 						style={{
 							fill: '#ffc747',
-							stroke: 'var(--background)',
+							stroke: backgroundColor,
 							strokeWidth: 10,
 							paintOrder: 'stroke fill markers',
 						}}
@@ -283,7 +279,7 @@ export default function TeSS({
 					transform='matrix(0.55491613,0,0,0.55491613,22.254193,23.89466)'
 				>
 					<rect
-						style={{ fill: 'var(--background)' }}
+						style={{ fill: backgroundColor }}
 						width='70.639999'
 						height='52.095608'
 						x='14.680054'
@@ -309,7 +305,7 @@ export default function TeSS({
 				transition={ smoothTransition }
 			>	
 				<circle
-					style={{ fill: 'var(--background)' }}
+					style={{ fill: backgroundColor }}
 					cx={ 41.884613 }
 					cy={ 62.300571 }
 					r={ 6.0135441 }
@@ -356,7 +352,7 @@ export default function TeSS({
 				transition={ smoothTransition }
 			>	
 				<circle
-					style={{ fill: 'var(--background)' }}
+					style={{ fill: backgroundColor }}
 					cx={ 58.197456 }
 					cy={ 65.376465 }
 					r={ 4.3891959 }

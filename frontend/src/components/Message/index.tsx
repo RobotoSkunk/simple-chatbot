@@ -23,7 +23,8 @@ import remarkGfm from 'remark-gfm';
 import style from './message.module.css';
 import 'katex/dist/katex.min.css';
 
-import icon from '@/assets/img/assistant.png';
+import TeSS from '../TeSS';
+
 import refreshIcon from '@/assets/icons/refresh.svg';
 import editIcon from '@/assets/icons/pen-line.svg';
 import trashIcon from '@/assets/icons/trash.svg';
@@ -69,6 +70,7 @@ export default function Message({
 	contentIndex,
 	contentCount,
 	editedByUser,
+	hideTeSS,
 
 	onRegenerate,
 	onEdit,
@@ -83,6 +85,7 @@ export default function Message({
 	contentIndex: number;
 	contentCount: number;
 	editedByUser: boolean;
+	hideTeSS?: boolean;
 
 	onRegenerate: () => Promise<void>;
 	onEdit: (newContent: string) => void;
@@ -146,14 +149,6 @@ export default function Message({
 			style.container,
 			style[`role-${role}`],
 		].join(' ') }>
-			{ role === 'assistant' && <>
-				<Image
-					src={ icon }
-					width={ 50 }
-					height={ 50 }
-					alt=''
-				/>
-			</> }
 			<div className={ style.message }>
 				<div className={ style.content }>
 					{ editing ?

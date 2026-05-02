@@ -18,6 +18,7 @@ import {
 } from 'next/navigation';
 
 import {
+	AnimatePresence,
 	motion,
 } from 'framer-motion';
 
@@ -330,12 +331,13 @@ export default function Chat({
 					ref={ messagesContainerRef }
 				>
 					<div className={ style.wrapper }>
-						{ messages && messages.map((v) =>
+						{ messages && messages.map((v, i) =>
 						(
 							<Message
 								key={ v.id }
 								createdAt={ new Date(v.created_at) }
 								role={ v.role }
+								hideTeSS={ i < messages.length - 1 }
 
 								messageId={ v.id }
 								content={ v.content }
@@ -454,6 +456,24 @@ export default function Chat({
 							</Message>
 						)) }
 					</div>
+					<AnimatePresence>
+						{ messages.length > 0 &&
+							<motion.div
+								initial={{ x: -50, opacity: 0 }}
+								animate={{ x: 0, opacity: 1 }}
+								exit={{ x: -50, opacity: 0 }}
+								transition={ smooth }
+
+								className={ style['tess-container'] }
+							>
+								<div className={ style.background }/>
+								<TeSS
+									backgroundColor='#263c5d'
+									className={ style.tess }
+								/>
+							</motion.div>
+						}
+					</AnimatePresence>
 				</div>
 				<DottedDiv
 					color='var(--background)'
@@ -469,7 +489,6 @@ export default function Chat({
 			{ !chatId && <>
 				<div style={{ position: 'relative' }}>
 					<TeSS
-						followCursor
 						className={ style.tess }
 					/>
 				</div>
@@ -483,6 +502,7 @@ export default function Chat({
 				<div className={ style.input }>
 					<textarea
 						ref={ textAreaRef }
+						id='main-input'
 						rows={ 1 }
 						disabled={ !chatId && busy }
 						onInput={ resize }

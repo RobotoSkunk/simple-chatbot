@@ -30,6 +30,34 @@
 	margin: 0 10px;
 
 	flex-grow: 1;
+
+	& .tess-container {
+		position: relative;
+		height: 130px;
+		max-width: min(880px, calc(100% - 140px));
+		margin: 0 auto;
+
+		& .background {
+			position: absolute;
+			left: 0px;
+			bottom: 0px;
+
+			transform: translate(-50%, -88%);
+
+			width: 100px;
+			height: 100px;
+			background: #263c5d;
+			border-radius: 10px;
+		}
+
+		& .tess {
+			position: absolute;
+			left: 0px;
+			bottom: -50px;
+
+			transform: translateX(-50%) scale(0.4);
+		}
+	}
 }
 
 .wrapper {
