@@ -39,33 +39,10 @@ export default function TeSS({
 	const [ blinkDelta, setBlinkDelta ] = useState(0);
 	const [ mouseXDelta, setMouseXDelta ] = useState(0);
 	const [ mouseYDelta, setMouseYDelta ] = useState(0);
-	const [ blinkTimeoutId, setBlinkTimeoutId ] = useState<NodeJS.Timeout | null>(null);
 	const [ canFollowCursor, setCanFollowCursor ] = useState(true);
 
 	const svgRef = useRef<SVGGElement | null>(null);
 	const dotRef = useRef<HTMLDivElement | null>(null);
-
-	function blinkLoop()
-	{
-		wait(() =>
-		{
-			setBlinkDelta(1);
-
-			wait(() =>
-			{
-				setBlinkDelta(0);
-
-				blinkLoop();
-			}, 150 + Math.random() * 150);
-		}, 1000 + Math.random() * 10000);
-	}
-
-	function wait(callback: () => void, ms: number)
-	{
-		setBlinkTimeoutId(
-			setTimeout(callback, ms)
-		);
-	}
 
 	function moveEyes(targetX: number, targetY: number)
 	{
@@ -118,10 +95,31 @@ export default function TeSS({
 	}, [ status ]);
 
 	useEffect(() => {
-		setId(crypto.randomUUID());
-		blinkLoop();
-
+		let blinkTimeoutId: NodeJS.Timeout | null = null;
 		const textarea = document.getElementById('main-input') as HTMLTextAreaElement;
+		setId(crypto.randomUUID());
+
+		function wait(callback: () => void, ms: number)
+		{
+			blinkTimeoutId = setTimeout(callback, ms);
+		}
+
+		function blinkLoop()
+		{
+			wait(() =>
+			{
+				setBlinkDelta(1);
+
+				wait(() =>
+				{
+					setBlinkDelta(0);
+
+					blinkLoop();
+				}, 150 + Math.random() * 150);
+			}, 150 + Math.random() * 10000);
+		}
+
+		blinkLoop();
 
 		function onMouseMove(ev: MouseEvent)
 		{
