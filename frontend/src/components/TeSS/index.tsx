@@ -8,6 +8,7 @@ import {
 } from 'react';
 
 import {
+	AnimatePresence,
 	motion,
 	Transition,
 } from 'framer-motion';
@@ -27,9 +28,11 @@ const debugPointer = false;
 export default function TeSS({
 	backgroundColor = 'var(--background)',
 	className,
+	status,
 }: {
 	backgroundColor?: string;
 	className?: string;
+	status: ChunkStatusTypes;
 })
 {
 	const [ id, setId ] = useState('');
@@ -37,6 +40,7 @@ export default function TeSS({
 	const [ mouseXDelta, setMouseXDelta ] = useState(0);
 	const [ mouseYDelta, setMouseYDelta ] = useState(0);
 	const [ blinkTimeoutId, setBlinkTimeoutId ] = useState<NodeJS.Timeout | null>(null);
+	const [ canFollowCursor, setCanFollowCursor ] = useState(true);
 
 	const svgRef = useRef<SVGGElement | null>(null);
 	const dotRef = useRef<HTMLDivElement | null>(null);
@@ -53,7 +57,7 @@ export default function TeSS({
 
 				blinkLoop();
 			}, 150 + Math.random() * 150);
-		}, 150 + Math.random() * 10000);
+		}, 1000 + Math.random() * 10000);
 	}
 
 	function wait(callback: () => void, ms: number)
@@ -84,6 +88,35 @@ export default function TeSS({
 		}
 	}
 
+	useEffect(() =>
+	{
+		if (!svgRef.current) {
+			return;
+		}
+
+		const box = svgRef.current?.getBoundingClientRect();
+
+		switch(status) {
+			case 'thinking': {
+				setCanFollowCursor(false);
+				moveEyes(box.x - 1000, box.y - 1000);
+				break;
+			}
+
+			case 'web_search': {
+				setCanFollowCursor(false);
+				moveEyes(box.x - 430, box.y + 500);
+				break;
+			}
+
+			default: {
+				setCanFollowCursor(true);
+				moveEyes(box.x, box.y);
+				break;
+			}
+		}
+	}, [ status ]);
+
 	useEffect(() => {
 		setId(crypto.randomUUID());
 		blinkLoop();
@@ -92,11 +125,19 @@ export default function TeSS({
 
 		function onMouseMove(ev: MouseEvent)
 		{
+			if (!canFollowCursor) {
+				return;
+			}
+
 			moveEyes(ev.x, ev.y);
 		}
 
 		function onInput(ev: InputEvent)
 		{
+			if (!canFollowCursor) {
+				return;
+			}
+
 			const target = ev.target as HTMLTextAreaElement;
 			const inputRect = target.getBoundingClientRect();
 
@@ -136,7 +177,7 @@ export default function TeSS({
 				textarea.removeEventListener('input', onInput);
 			}
 		};
-	}, [ ]);
+	}, [ canFollowCursor ]);
 
 	return (<>
 		<svg
@@ -390,52 +431,104 @@ export default function TeSS({
 					/>
 				</g>
 			</motion.g>
-			<motion.g // inkscape:label='thinking'
-			>	
-				<g // inkscape:label='thinking'
-					style={{ display: 'none' }}
-				>
-					<circle // inkscape:label='circle-bottom'
-						style={{ fill: '#ffffff' }}
-						cx='26.249496'
-						cy='56.516151'
-						r='1.9600424'
-					/>
-					<circle // inkscape:label='circle-middle'
-						style={{ fill: '#ffffff' }}
-						cx='19.990448'
-						cy='52.574696'
-						r='3.4076118'
-					/>
-					<ellipse // inkscape:label='circle-top'
-						style={{ fill: '#ffffff' }}
-						cx='12.832587'
-						cy='42.135117'
-						rx='9.0253992'
-						ry='6.5669851'
-					/>
-				</g>
-			</motion.g>
-			<motion.g // inkscape:label='magnifying-glass'
-			>	
-				<g // inkscape:label='magnifying-glass'
-					style={{ display: 'none' }}
-					transform='rotate(-32.915266,18.575314,62.54366)'
-				>
-					<path
-						style={{ fill: '#ffffff' }}
-						d='m 21.094836,67.908516 a 5.2406583,5.2406583 0 0 0 -5.240507,5.240507 5.2406583,5.2406583 0 0 0 5.240507,5.240507 5.2406583,5.2406583 0 0 0 5.240507,-5.240507 5.2406583,5.2406583 0 0 0 -5.240507,-5.240507 z m 0,2.468584 a 2.7720928,2.7720928 0 0 1 2.771924,2.771923 2.7720928,2.7720928 0 0 1 -2.771924,2.771924 2.7720928,2.7720928 0 0 1 -2.771923,-2.771924 2.7720928,2.7720928 0 0 1 2.771923,-2.771923 z'
-					/>
-					<rect
-						style={{ fill: '#ffffff' }}
-						width='2.4349046'
-						height='7.1496086'
-						x='19.877384'
-						y='79.523041'
-						ry='1.2174523'
-					/>
-				</g>
-			</motion.g>
+			<AnimatePresence // inkscape:label='thinking'
+			>
+				{ status === 'thinking' &&
+					<motion.g
+						initial={{ scale: 0 }}
+						animate={{ scale: 1 }}
+						exit={{ scale: 0 }}
+						style={{
+							transformOrigin: 'bottom right',
+						}}
+					>
+						<motion.circle // inkscape:label='circle-bottom'
+							style={{ fill: '#ffffff' }}
+							cx='26.249496'
+							cy='56.516151'
+							r='1.9600424'
+							animate={{ scale: 0 }}
+							transition={{
+								type: 'tween',
+								delay: 0.1,
+								repeat: Infinity,
+								repeatType: 'mirror',
+								duration: 0.6,
+							}}
+						/>
+						<motion.circle // inkscape:label='circle-middle'
+							style={{ fill: '#ffffff' }}
+							cx='19.990448'
+							cy='52.574696'
+							r='3.4076118'
+							animate={{ scale: 0 }}
+							transition={{
+								type: 'tween',
+								delay: 0.25,
+								repeat: Infinity,
+								repeatType: 'mirror',
+								duration: 0.6,
+							}}
+						/>
+						<motion.ellipse // inkscape:label='circle-top'
+							style={{ fill: '#ffffff' }}
+							cx='12.832587'
+							cy='42.135117'
+							rx='9.0253992'
+							ry='6.5669851'
+							animate={{ scale: 0 }}
+							transition={{
+								type: 'tween',
+								delay: 0.4,
+								repeat: Infinity,
+								repeatType: 'mirror',
+								duration: 0.6,
+							}}
+						/>
+					</motion.g>
+				}
+			</AnimatePresence>
+			<AnimatePresence // inkscape:label='magnifying-glass'
+			>
+				{ status === 'web_search' &&
+					<motion.g
+						initial={{ scale: 0 }}
+						animate={{ scale: 1 }}
+						exit={{ scale: 0 }}
+					>
+						<motion.g
+							animate={ 'animated' }
+							variants={{
+								animated: {
+									// I know, a dirty solution, but it works so cry about it
+									x: [ 5, 3.5, 0, -3.5, -5, -3.5, 0, 3.5, 5 ],
+									y: [ 0, 3.5, 5, 3.5, 0, -3.5, -5, -3.5, 0 ],
+									transition: {
+										ease: 'linear',
+										repeat: Infinity,
+										duration: 1,
+									},
+								}
+							}}
+						>	
+							<g transform='rotate(-32.915266,18.575314,62.54366)'>
+								<path
+									style={{ fill: '#ffffff' }}
+									d='m 21.094836,67.908516 a 5.2406583,5.2406583 0 0 0 -5.240507,5.240507 5.2406583,5.2406583 0 0 0 5.240507,5.240507 5.2406583,5.2406583 0 0 0 5.240507,-5.240507 5.2406583,5.2406583 0 0 0 -5.240507,-5.240507 z m 0,2.468584 a 2.7720928,2.7720928 0 0 1 2.771924,2.771923 2.7720928,2.7720928 0 0 1 -2.771924,2.771924 2.7720928,2.7720928 0 0 1 -2.771923,-2.771924 2.7720928,2.7720928 0 0 1 2.771923,-2.771923 z'
+								/>
+								<rect
+									style={{ fill: '#ffffff' }}
+									width='2.4349046'
+									height='7.1496086'
+									x='19.877384'
+									y='79.523041'
+									ry='1.2174523'
+								/>
+							</g>
+						</motion.g>
+					</motion.g>
+				}
+			</AnimatePresence>
 		</svg>
 		{ debugPointer &&
 			<div

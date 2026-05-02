@@ -2,7 +2,7 @@
 
 declare global
 {
-	type ChunkStatusTypes = 'thinking' | 'web_search';
+	type ChunkStatusTypes = 'thinking' | 'web_search' | 'none';
 
 	type ChunkStatusResponse = {
 		type: 'status';

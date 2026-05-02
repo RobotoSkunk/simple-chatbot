@@ -67,7 +67,7 @@ export default function Chat({
 	const [ messages, setMessages ] = useImmer<MessageData[]>([]);
 	const [ firstLoad, setFirstLoad ] = useState(true);
 	const [ busy, setBusy ] = useState(false);
-	const [ status, setStatus ] = useState<ChunkStatusTypes>('thinking');
+	const [ status, setStatus ] = useState<ChunkStatusTypes>('none');
 
 	let alreadyCalled = false;
 
@@ -194,6 +194,8 @@ export default function Chat({
 						}
 
 						case 'end': {
+							setStatus('none');
+
 							if (data.message_id === 'no-response') {
 								const messagesCopy = [... messages];
 								messagesCopy.pop();
@@ -430,6 +432,7 @@ export default function Chat({
 
 													case 'end': {
 														setBusy(false);
+														setStatus('none');
 														break;
 													}
 
@@ -470,6 +473,7 @@ export default function Chat({
 								<TeSS
 									backgroundColor='#263c5d'
 									className={ style.tess }
+									status={ status }
 								/>
 							</motion.div>
 						}
@@ -490,6 +494,7 @@ export default function Chat({
 				<div style={{ position: 'relative' }}>
 					<TeSS
 						className={ style.tess }
+						status={ status }
 					/>
 				</div>
 				<h1>How can I help you today?</h1>
