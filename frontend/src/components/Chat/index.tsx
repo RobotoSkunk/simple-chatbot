@@ -465,36 +465,32 @@ export default function Chat({
 								) }
 							</Message>
 						)) }
-					</div>
-					<AnimatePresence>
-						{ messages.length > 0 &&
-							<motion.div
-								initial={{ x: -50, opacity: 0 }}
-								animate={{ x: 0, opacity: 1 }}
-								exit={{ x: -50, opacity: 0 }}
-								transition={ smooth }
+						<AnimatePresence>
+							{ messages.length > 0 &&
+								<motion.div
+									initial={{ x: -50, opacity: 0 }}
+									animate={{ x: 0, opacity: 1 }}
+									exit={{ x: -50, opacity: 0 }}
+									transition={ smooth }
 
-								className={ style['tess-container'] }
-							>
-								<div className={ style.background }/>
-								<TeSS
-									backgroundColor='#263c5d'
-									className={ style.tess }
-									status={ status }
-								/>
-							</motion.div>
-						}
-					</AnimatePresence>
+									className={ style['tess-container'] }
+								>
+									<div className={ style.background }/>
+									<TeSS
+										backgroundColor='#263c5d'
+										className={ style.tess }
+										status={ status }
+									/>
+								</motion.div>
+							}
+						</AnimatePresence>
+					</div>
 				</div>
 				<DottedDiv
 					color='var(--background)'
 					className={ style.header }
 					gradientRotation={ 180 }
-				>
-					{/* <select>
-						<option>Model</option>
-					</select> */}
-				</DottedDiv>
+				/>
 			</>}
 
 			{ !chatId && <>
@@ -548,6 +544,10 @@ export default function Chat({
 						}
 					</button>
 				</div>
+				<span>
+					Remember, AI models are dumb and you shouldn't rely on them to get "definitive answers", but if you
+					do, at least make sure what the AI says is true.
+				</span>
 			</DottedDiv>
 		</motion.div>
 	);
