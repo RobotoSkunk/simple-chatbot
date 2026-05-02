@@ -8,11 +8,14 @@ import {
 } from 'react';
 
 import {
+	useRouter,
+} from 'next/navigation';
+
+import {
 	VaultsContext,
 } from '@/contexts/vaults';
 
 import Chat from '@/components/Chat';
-import { useRouter } from 'next/navigation';
 
 
 export default function Page({
@@ -37,10 +40,10 @@ export default function Page({
 				return;
 			}
 
-			let vaultIndex = vaultsContext.data.findIndex(v => v.id === data.vault_id);
+			const currentVaultId = localStorage.getItem('current_vault');
 
-			if (vaultIndex !== vaultsContext.currentVault) {
-				router.push('/');
+			if (currentVaultId !== data.vault_id) {
+				vaultsContext.setCurrentVault(data.vault_id);
 			}
 		})();
 	}, [ vaultsContext.data ]);

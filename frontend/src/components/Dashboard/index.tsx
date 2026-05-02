@@ -119,8 +119,27 @@ export default function Dashboard({
 		setVaults([... data ]);
 	}
 
+	function changeCurrentVault(id: string)
+	{
+		let vaultIndex = vaults.findIndex(v => v.id === id);
+
+		if (vaultIndex < 0) {
+			vaultIndex = 0;
+		}
+
+		setCurrentVault(vaultIndex);
+		localStorage.setItem('current_vault', id);
+	}
+
 	return (
-		<VaultsContext.Provider value={{ currentVault, data: vaults, update: updateVaults }}>
+		<VaultsContext.Provider
+			value={{
+				currentVault,
+				data: vaults,
+				update: updateVaults,
+				setCurrentVault: changeCurrentVault,
+			}}
+		>
 			<ChatsContext.Provider value={{ data: chats, update: updateChats }}>
 				<motion.div
 					className={ style.chats }
@@ -223,10 +242,10 @@ export default function Dashboard({
 												className={ style['dropdown-toggle'] + ' default' }
 												onClick={() =>
 												{
-													localStorage.setItem('current_vault', v.id);
 													let vaultIndex = vaults.findIndex(vi => vi.id === v.id);
 
 													if (vaultIndex !== currentVault) {
+														localStorage.setItem('current_vault', v.id);
 														setCurrentVault(vaultIndex);
 														router.push('/');
 													}
@@ -349,7 +368,11 @@ export default function Dashboard({
 
 								if (json.success) {
 									setVaults(v => {
-										const vault = v[currentVault];
+										const vault = v.find(vi => vi.id === vaults[currentVault].id);
+
+										if (!vault) {
+											return;
+										}
 
 										vault.name = form.get('name') as string;
 										vault.user_prompt = form.get('user-prompt') as string;

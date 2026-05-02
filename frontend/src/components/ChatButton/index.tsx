@@ -7,6 +7,11 @@ import {
 } from 'react';
 
 import {
+	usePathname,
+	useRouter,
+} from 'next/navigation';
+
+import {
 	motion,
 	Variants,
 } from 'framer-motion';
@@ -48,6 +53,8 @@ export default function ChatButton({
 })
 {
 	const chatsContext = useContext(ChatsContext);
+	const pathname = usePathname();
+	const router = useRouter();
 	
 	const [ editing, setEditing ] = useState(false);
 	const [ displayName, setDisplayName ] = useState('');
@@ -179,6 +186,10 @@ export default function ChatButton({
 											}
 
 											chatsContext.update(chats);
+
+											if (pathname.includes(chatId)) {
+												router.push('/');
+											}
 										} catch (error) {
 											console.error(error);
 										}
