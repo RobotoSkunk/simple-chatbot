@@ -15,18 +15,19 @@ declare global
 	};
 
 	type ChunkNewMessageDataResponse = {
-		type: 'user_message_data';
+		type: 'message_data';
+		role: 'user' | 'assistant';
 		message_id: string;
+		elapsed_time: number;
 	};
 
 	type ChunkErrorResponse = {
 		type: 'error';
+		message: string;
 	};
 
 	type ChunkEndResponse = {
 		type: 'end';
-		message_id: string;
-		elapsed_time: number;
 	};
 
 	type ChunkResponse =

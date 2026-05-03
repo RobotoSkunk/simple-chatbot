@@ -74,6 +74,7 @@ export default function Message({
 	contentCount,
 	editedByUser,
 	isBusy,
+	showControls,
 
 	onRegenerate,
 	onEdit,
@@ -89,6 +90,7 @@ export default function Message({
 	contentCount: number;
 	editedByUser: boolean;
 	isBusy?: boolean;
+	showControls?: boolean;
 
 	onRegenerate: () => Promise<void>;
 	onEdit: (newContent: string) => void;
@@ -195,7 +197,7 @@ export default function Message({
 					}
 					{ createdAt && <span className={ style.date }>{ getFormattedDate() }</span> }
 				</div>
-				{ !messageId.startsWith(':new') && content.length > 0 &&
+				{ showControls && content.length > 0 &&
 					<div className={ style.footer }>
 						{ contentCount > 1 &&
 							<div className={ style.options }>

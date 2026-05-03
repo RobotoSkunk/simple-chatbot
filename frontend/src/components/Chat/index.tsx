@@ -47,8 +47,13 @@ import TeSS from '@/components/TeSS';
 import style from './chat.module.css';
 
 import sendIcon from '@/assets/icons/send.svg';
+import stopIcon from '@/assets/icons/stop.svg';
 import spinnerIcon from '@/assets/icons/spinner.svg';
 
+
+type ChatMessage = MessageData & {
+	hideControls?: boolean;
+};
 
 export default function Chat({
 	vaultId,
@@ -64,10 +69,12 @@ export default function Chat({
 	const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 	const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 
-	const [ messages, setMessages ] = useImmer<MessageData[]>([]);
+	const [ messages, setMessages ] = useImmer<ChatMessage[]>([]);
 	const [ firstLoad, setFirstLoad ] = useState(true);
 	const [ busy, setBusy ] = useState(false);
 	const [ status, setStatus ] = useState<ChunkStatusTypes>('none');
+
+	const [ abortController, setAbortController ] = useState<AbortController | null>(null);
 
 	let alreadyCalled = false;
 
@@ -97,7 +104,7 @@ export default function Chat({
 			(async () =>
 			{
 				const response = await fetch(`${host}/vault/${vaultId}/chat/${chatId}/messages`);
-				const json: MessageData[] = await response.json();
+				const json: ChatMessage[] = await response.json();
 				console.log(json);
 
 				setMessages(json);
@@ -119,10 +126,43 @@ export default function Chat({
 		}
 	}, [ messages ]);
 
+
+	async function parseBody(
+		body: globalThis.ReadableStream<Uint8Array<ArrayBuffer>>,
+		callback: (chunk: ChunkResponse) => void)
+	{
+		const stream = body.pipeThrough(new TextDecoderStream('utf-8')) as ReadableStream;
+
+		for await (const value of stream) {
+			const parts: string[] = (value as string).split('\n').filter(v => v.length > 0);
+
+			for (const part of parts) {
+				let chunk: ChunkResponse;
+
+				try {
+					chunk = JSON.parse(part);
+				} catch (error) {
+					console.warn('Illegal JSON', error);
+					console.log(value, part);
+					continue;
+				}
+
+				if (chunk.type != 'status') {
+					callback(chunk);
+				} else {
+					setStatus(chunk.status);
+				}
+			}
+		}
+	}
+
 	async function sendMessage(content?: string)
 	{
-		const message: MessageData = {
-			id: ':new_assistant',
+		let userMessageId = crypto.randomUUID();
+		let assistantMessageId = crypto.randomUUID();
+
+		const message: ChatMessage = {
+			id: assistantMessageId,
 			role: 'assistant',
 			content: '',
 			created_at: Date.now(),
@@ -130,13 +170,14 @@ export default function Chat({
 			content_count: 1,
 			edited_by_user: false,
 			index: 0,
+			hideControls: true,
 		};
 
 		if (content) {
 			setMessages([
 				...messages,
 				{
-					id: ':new_user',
+					id: userMessageId,
 					role: 'user',
 					content: content,
 					created_at: Date.now(),
@@ -154,42 +195,31 @@ export default function Chat({
 			]);
 		}
 
-		const response = await fetch(`${host}/vault/${vaultId}/chat/${chatId}/message`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ content }),
-		});
+		const controller = new AbortController();
+		setAbortController(controller);
 
-		if (response.body) {
-			const stream = response.body.pipeThrough(new TextDecoderStream('utf-8')) as ReadableStream;
+		try {
+			const response = await fetch(`${host}/vault/${vaultId}/chat/${chatId}/message`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ content }),
+				signal: controller.signal,
+			});
 
-			for await (const value of stream) {
-				const parts: string[] = (value as string).split('\n').filter(v => Boolean(v));
-
-				for (const part of parts) {
-					let data: ChunkResponse;
-
-					try {
-						data = JSON.parse(part);
-					} catch (error) {
-						console.warn('Illegal JSON', error);
-						console.log(value, part);
-						continue;
-					}
-
-					console.log(data);
-
-					switch (data.type) {
+			if (response.body) {
+				await parseBody(response.body, (chunk) => 
+				{
+					switch (chunk.type) {
 						case 'writing': {
 							setStatus('typing');
 
 							setMessages(m => {
-								const msg = m.find(m => m.id === ':new_assistant');
+								const msg = m.find(m => m.id === assistantMessageId);
 
 								if (msg) {
-									msg.content += data.token;
+									msg.content += chunk.token;
 								}
 							});
 							break;
@@ -197,45 +227,40 @@ export default function Chat({
 						case 'end': {
 							setStatus('none');
 
-							if (data.message_id === 'no-response') {
-								const messagesCopy = [... messages];
-								messagesCopy.pop();
+							setMessages(m => {
+								const msg = m.find(m => m.id === assistantMessageId);
 
-								setMessages(messagesCopy);
-							} else {
-								setMessages(m => {
-									const msg = m.find(m => m.id === ':new_assistant');
-
-									if (msg) {
-										msg.id = data.message_id;
-										msg.created_at = Date.now();
-										msg.generation_time = data.elapsed_time;
-									}
-								});
-							}
+								if (msg) {
+									msg.hideControls = false;
+								}
+							});
 							break;
 						}
-						case 'user_message_data': {
+						case 'message_data': {
 							if (!content) {
 								break;
 							}
 
 							setMessages(m => {
-								const msg = m.find(m => m.id === ':new_user');
+								const targetId = chunk.role === 'assistant' ? assistantMessageId : userMessageId;
+								const msg = m.find(m => m.id === targetId);
 
 								if (msg) {
-									msg.id = data.message_id;
+									msg.id = chunk.message_id;
+									msg.generation_time = chunk.elapsed_time;
+								}
+
+								if (chunk.role === 'assistant') {
+									assistantMessageId = chunk.message_id;
+								} else {
+									userMessageId = chunk.message_id;
 								}
 							});
 
 							break;
 						}
-						case 'status': {
-							setStatus(data.status);
-							break;
-						}
 						case 'error': {
-							const messageIndex = messages.findIndex(m => m.id === ':new_assistant');
+							const messageIndex = messages.findIndex(m => m.id === assistantMessageId);
 							const messagesCopy = [... messages];
 							messagesCopy.splice(messageIndex, 1);
 
@@ -243,7 +268,11 @@ export default function Chat({
 							break;
 						}
 					}
-				}
+				});
+			}
+		} catch (error) {
+			if ((error as Error).name !== 'AbortError') {
+				console.error(error);
 			}
 		}
 	}
@@ -251,6 +280,18 @@ export default function Chat({
 	async function onSendClick()
 	{
 		if (!textAreaRef.current) {
+			return;
+		}
+
+		if (busy && abortController) {
+			abortController.abort();
+			setBusy(false);
+
+			setMessages(m => {
+				for (const message of m) {
+					message.hideControls = false;
+				}
+			});
 			return;
 		}
 
@@ -302,6 +343,77 @@ export default function Chat({
 		}
 	}
 
+	async function onRegenerateMessage(message: ChatMessage) {
+		setBusy(true);
+
+		const controller = new AbortController();
+		setAbortController(controller);
+
+		try {
+			const response = await fetch(`${host}/vault/${vaultId}/chat/${chatId}/message/${message.id}/regenerate`, {
+				method: 'POST',
+				signal: controller.signal,
+			});
+
+			setMessages(m => {
+				const msg = m.find(m => m.id === message.id);
+
+				if (msg) {
+					msg.index++;
+					msg.content_count++;
+					msg.content = '';
+					msg.edited_by_user = false;
+					msg.hideControls = true;
+				}
+			});
+
+			if (response.body) {
+				await parseBody(response.body, (chunk) =>
+				{
+					switch (chunk.type) {
+						case 'writing': {
+							setStatus('typing');
+
+							setMessages(m => {
+								const msg = m.find(m => m.id === message.id);
+
+								if (msg) {
+									msg.content += chunk.token;
+								}
+							});
+							break;
+						}
+						case 'end': {
+							setBusy(false);
+							setStatus('none');
+
+							setMessages(m => {
+								const msg = m.find(m => m.id === message.id);
+
+								if (msg) {
+									msg.hideControls = false;
+								}
+							});
+							break;
+						}
+						case 'error': {
+							const messagesCopy = [... messages];
+							const messageIndex = messagesCopy.findIndex(m => m.id === ':new_assistant');
+							messagesCopy.splice(messageIndex, 1);
+
+							setMessages(messagesCopy);
+							break;
+						}
+					}
+				});
+			}
+		} catch (error) {
+			if ((error as Error).name !== 'AbortError') {
+				console.error(error);
+			}
+		}
+	}
+
 	function resize()
 	{
 		if (!textAreaRef.current) {
@@ -317,7 +429,6 @@ export default function Chat({
 
 		textAreaRef.current.style.height = height + 'px';
 	}
-
 
 	return (
 		<motion.div
@@ -343,6 +454,7 @@ export default function Chat({
 								createdAt={ new Date(v.created_at) }
 								role={ v.role }
 								isBusy={ busy }
+								showControls={ !v.hideControls }
 
 								messageId={ v.id }
 								content={ v.content }
@@ -381,77 +493,7 @@ export default function Chat({
 										}
 									});
 								} }
-								onRegenerate={ async () => {
-									setBusy(true);
-									const response = await fetch(`${host}/vault/${vaultId}/chat/${chatId}/message/${v.id}/regenerate`, {
-										method: 'POST',
-									});
-
-									setMessages(m => {
-										const msg = m.find(m => m.id === v.id);
-
-										if (msg) {
-											msg.index++;
-											msg.content_count++;
-											msg.content = '';
-											msg.edited_by_user = false;
-										}
-									});
-
-									if (response.body) {
-										const stream = response.body.pipeThrough(new TextDecoderStream('utf-8')) as ReadableStream;
-
-										for await (const value of stream) {
-											const parts: string[] = value.split('\n');
-
-											for (const part of parts) {
-												let data: ChunkResponse;
-
-												try {
-													data = JSON.parse(part);
-												} catch (error) {
-													console.warn('Illegal JSON', error);
-													console.log(part);
-													continue;
-												}
-
-												console.log(data);
-
-												switch (data.type) {
-													case 'writing': {
-														setStatus('typing');
-
-														setMessages(m => {
-															const msg = m.find(m => m.id === v.id);
-
-															if (msg) {
-																msg.content += data.token;
-															}
-														});
-														break;
-													}
-													case 'end': {
-														setBusy(false);
-														setStatus('none');
-														break;
-													}
-													case 'status': {
-														setStatus(data.status);
-														break;
-													}
-													case 'error': {
-														const messagesCopy = [... messages];
-														const messageIndex = messagesCopy.findIndex(m => m.id === ':new_assistant');
-														messagesCopy.splice(messageIndex, 1);
-
-														setMessages(messagesCopy);
-														break;
-													}
-												}
-											}
-										}
-									}
-								} }
+								onRegenerate={ async () => await onRegenerateMessage(v) }
 							>
 								{ v.role === 'assistant' && ( v.content ||
 									<div className={ style.loader }>
@@ -512,7 +554,7 @@ export default function Chat({
 						ref={ textAreaRef }
 						id='main-input'
 						rows={ 1 }
-						disabled={ !chatId && busy }
+						disabled={ busy }
 						onInput={ resize }
 						onKeyDown={ (ev) => {
 							if (!ev.shiftKey && ev.key.toLowerCase() === 'enter') {
@@ -524,7 +566,7 @@ export default function Chat({
 					/>
 					<button
 						onClick={ onSendClick }
-						disabled={ busy }
+						// disabled={ busy }
 						className='default'
 					>
 						<div className={ style.circle }></div>
@@ -534,13 +576,20 @@ export default function Chat({
 								alt=''
 								width={ 20 }
 							/>
-							:
-							<Image
-								src={ spinnerIcon }
-								alt=''
-								width={ 20 }
-								className={ style.spinner }
-							/>
+							: <>
+								<Image
+									src={ spinnerIcon }
+									alt=''
+									width={ 20 }
+									className={ style.spinner }
+								/>
+								<Image
+									src={ stopIcon }
+									alt=''
+									width={ 20 }
+									className={ style.stop }
+								/>
+							</>
 						}
 					</button>
 				</div>

@@ -134,8 +134,10 @@ export default function getAskMiddleware(isNewMessage: boolean)
 			});
 
 			sendDataChunk({
-				type: 'user_message_data',
+				type: 'message_data',
+				role: 'user',
 				message_id: newMessage.id,
+				elapsed_time: 0,
 			});
 		}
 
@@ -193,6 +195,50 @@ export default function getAskMiddleware(isNewMessage: boolean)
 			let thinking = '';
 			let content = '';
 			let totalDuration = 0;
+
+			async function saveMessage(sendChunks: boolean)
+			{
+				if (isNewMessage) {
+					if (content.length > 0) {
+						if (!dbMessage) {
+							dbMessage = await addMessage({
+								role: 'assistant',
+								content: finalContent,
+							}, totalDuration);
+
+							if (sendChunks) {
+								sendDataChunk({
+									type: 'message_data',
+									role: 'assistant',
+									message_id: dbMessage.id,
+									elapsed_time: 0,
+								});
+							}
+						} else {
+							await dbMessage.overrideContent(finalContent, totalDuration);
+						}
+					}
+
+					if (sendChunks) {
+						sendDataChunk({ type: 'end' });
+					}
+				} else if (dbMessage) {
+					let newContent = content.length > 0 ? content : '[No response]';
+					await dbMessage.updateMessage(newContent, totalDuration, false);
+
+					if (sendChunks) {
+						sendDataChunk({ type: 'end' });
+					}
+				}
+			}
+
+			res.removeAllListeners('close');
+			res.on('close', () => {
+				console.log('close');
+				stream.abort();
+
+				saveMessage(false);
+			});
 
 			for await (const chunk of stream) {
 				if (chunk.message.tool_calls?.length) {
@@ -270,6 +316,14 @@ export default function getAskMiddleware(isNewMessage: boolean)
 							finalContent,
 							0
 						);
+
+						sendDataChunk({
+							type: 'message_data',
+							role: 'assistant',
+							message_id: dbMessage.id,
+							elapsed_time: 0,
+						});
+
 					} else if (--saveTick < 0) {
 						saveTick = maxSaveTick;
 						await dbMessage.overrideContent(finalContent, 0);
@@ -285,38 +339,7 @@ export default function getAskMiddleware(isNewMessage: boolean)
 				}
 			}
 
-			if (isNewMessage) {
-				let newMessage = 'no-response';
-
-				if (content.length > 0) {
-					if (!dbMessage) {
-						dbMessage = await addMessage({
-							role: 'assistant',
-							content: finalContent,
-						}, totalDuration);
-
-						newMessage = dbMessage.id;
-					} else {
-						await dbMessage.overrideContent(finalContent, totalDuration);
-						newMessage = dbMessage.id;
-					}
-				}
-
-				sendDataChunk({
-					type: 'end',
-					elapsed_time: totalDuration,
-					message_id: newMessage,
-				});
-			} else if (dbMessage) {
-				let newContent = content.length > 0 ? content : '[No response]';
-				dbMessage.updateMessage(newContent, totalDuration, false);
-
-				sendDataChunk({
-					type: 'end',
-					elapsed_time: totalDuration,
-					message_id: dbMessage.id,
-				});
-			}
+			await saveMessage(true);
 		}
 
 		await generate();
@@ -325,5 +348,6 @@ export default function getAskMiddleware(isNewMessage: boolean)
 		if (thinkingPing) {
 			clearInterval(thinkingPing);
 		}
+		// #endregion
 	}
 }
