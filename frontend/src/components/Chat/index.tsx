@@ -296,6 +296,7 @@ export default function Chat({
 			return;
 		}
 
+		setStatus('thinking');
 		setBusy(true);
 
 		const content = textAreaRef.current.value;

@@ -72,23 +72,33 @@ export default function TeSS({
 		}
 
 		const box = svgRef.current?.getBoundingClientRect();
+		const middle = {
+			x: box.x + box.width / 2,
+			y: box.y + box.height / 2,
+		};
 
 		switch(status) {
 			case 'thinking': {
 				setCanFollowCursor(false);
-				moveEyes(box.x - 1000, box.y - 1000);
+				moveEyes(middle.x - 1000, middle.y - 1000);
 				break;
 			}
 
 			case 'web_search': {
 				setCanFollowCursor(false);
-				moveEyes(box.x - 430, box.y + 500);
+				moveEyes(middle.x - 430, middle.y + 500);
+				break;
+			}
+
+			case 'typing': {
+				setCanFollowCursor(false);
+				moveEyes(middle.x, middle.y);
 				break;
 			}
 
 			default: {
 				setCanFollowCursor(true);
-				moveEyes(box.x, box.y);
+				moveEyes(middle.x, middle.y);
 				break;
 			}
 		}
