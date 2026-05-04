@@ -357,7 +357,8 @@ export default function TeSS({
 					style={{ fill: backgroundColor }}
 					cx={ 41.884613 }
 					cy={ 62.300571 }
-					r={ 6.0135441 }
+					r={ 5.9135441 }
+					// r={ 6.0135441 }
 				/>
 				<g // inkscape:label='eye-right'
 					clipPath={ `url(#clipPath19-${id})` }
@@ -404,7 +405,8 @@ export default function TeSS({
 					style={{ fill: backgroundColor }}
 					cx={ 58.197456 }
 					cy={ 65.376465 }
-					r={ 4.3891959 }
+					r={ 4.2891959 }
+					// r={ 4.3891959 }
 				/>
 				<g // inkscape:label='eye-left'
 					clipPath={ `url(#clipPath21-${id})` }
