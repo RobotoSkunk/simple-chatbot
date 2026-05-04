@@ -2,6 +2,7 @@
 import {
 	AnimatePresence,
 	motion,
+	MotionStyle,
 } from 'framer-motion';
 
 import {
@@ -13,18 +14,20 @@ import Image from 'next/image';
 import grainImg from '@/assets/img/grain.png';
 import crossIcon from '@/assets/icons/cross.svg';
 
-import style from './modal.module.css';
+import modalStyle from './modal.module.css';
 
 export default function Modal({
 	open,
 	title,
 	onCloseRequest,
 	children,
+	style,
 }: {
 	open?: boolean;
 	title: string;
 	onCloseRequest: () => void;
 	children?: React.ReactNode;
+	style?: MotionStyle;
 })
 {
 	return (
@@ -35,11 +38,11 @@ export default function Modal({
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
 
-					className={ style['modal-container'] }
+					className={ modalStyle['modal-container'] }
 					key='modal'
 				>
 					<div
-						className={ style.grain }
+						className={ modalStyle.grain }
 						style={{
 							backgroundImage: `url(${grainImg.src})`,
 						}}
@@ -59,12 +62,13 @@ export default function Modal({
 							rotateX: -5,
 						}}
 
-						className={ style.modal }
+						style={ style }
+						className={ modalStyle.modal }
 					>
-						<div className={ style.header }>
+						<div className={ modalStyle.header }>
 							<h2>{ title }</h2>
 							<button
-								className={ style.close }
+								className={ modalStyle.close }
 								onClick={ () => onCloseRequest() }
 							>
 								<Image

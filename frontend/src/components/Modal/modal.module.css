@@ -26,6 +26,10 @@
 	}
 
 	& .modal {
+		display: flex;
+		flex-direction: column;
+
+		position: relative;
 		border-radius: 10px;
 
 		background: #151b23;

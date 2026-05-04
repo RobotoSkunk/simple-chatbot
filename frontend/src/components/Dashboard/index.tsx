@@ -70,7 +70,8 @@ export default function Dashboard({
 
 	const [ chats, setChats ] = useState<ChatData[]>([]);
 
-	const [ modalEditVaultOpen, setModalEditVaultOpen ] = useState(false);
+	const [ vaultSettingsOpen, setVaultSettingsOpen ] = useState(false);
+	const [ settingsSection, setSettingsSection ] = useState(0);
 
 	useEffect(() =>
 	{
@@ -129,6 +130,12 @@ export default function Dashboard({
 
 		setCurrentVault(vaultIndex);
 		localStorage.setItem('current_vault', id);
+	}
+
+	function openSettingsModal()
+	{
+		setVaultSettingsOpen(true);
+		setSettingsSection(0);
 	}
 
 	return (
@@ -212,7 +219,7 @@ export default function Dashboard({
 						<div>
 							<button
 								className={ style['vault-options'] + ' default' }
-								onClick={ () => setModalEditVaultOpen(true) }
+								onClick={ () => openSettingsModal() }
 							>
 								<div></div>
 								<Image
@@ -344,80 +351,111 @@ export default function Dashboard({
 				{ vaults[currentVault] &&
 					<Modal
 						title='Vault Settings'
-						open={ modalEditVaultOpen }
-						onCloseRequest={ () => setModalEditVaultOpen(false) }
+						open={ vaultSettingsOpen }
+						onCloseRequest={ () => setVaultSettingsOpen(false) }
+
+						style={{
+							minHeight: 420,
+							maxHeight: 620,
+						}}
 					>
 						<div className={ style['vault-settings'] }>
 							<div className={ style.sections }>
-								<button className='default'>General</button>
-								<button className='default'>Directories</button>
-								<button className='default'>Destructive</button>
+								<button
+									className='default'
+									onClick={ () => setSettingsSection(0) }
+								>
+									General
+								</button>
+								<button
+									className='default'
+									onClick={ () => setSettingsSection(1) }
+								>
+									Directories
+								</button>
+								<button
+									className='default'
+									onClick={ () => setSettingsSection(2) }
+								>
+									Delete
+								</button>
 							</div>
 							<div className={ style.content }>
-								<form
-									onSubmit={ async (ev) => {
-										ev.preventDefault();
-										const form = new FormData(ev.currentTarget);
+								{ settingsSection === 0 &&
+									<form
+										onSubmit={ async (ev) => {
+											ev.preventDefault();
+											const form = new FormData(ev.currentTarget);
 
-										const response = await fetch(`${host}/vault/${vaults[currentVault].id}`, {
-											method: 'PATCH',
-											headers: {
-												'Content-Type': 'application/json',
-											},
-											body: JSON.stringify({
-												name: form.get('name'),
-												user_prompt: form.get('user-prompt'),
-											}),
-										});
-
-										const json = await response.json() as { success: boolean };
-
-										if (json.success) {
-											setVaults(v => {
-												const vault = v.find(vi => vi.id === vaults[currentVault].id);
-
-												if (!vault) {
-													return;
-												}
-
-												vault.name = form.get('name') as string;
-												vault.user_prompt = form.get('user-prompt') as string;
+											const response = await fetch(`${host}/vault/${vaults[currentVault].id}`, {
+												method: 'PATCH',
+												headers: {
+													'Content-Type': 'application/json',
+												},
+												body: JSON.stringify({
+													name: form.get('name'),
+													user_prompt: form.get('user-prompt'),
+												}),
 											});
 
-											setModalEditVaultOpen(false);
-										}
-									} }
-								>
-									<p className={ style['user-input'] }>
-										<label htmlFor='name'>Vault's name</label><br/>
-										<input
-											type='text'
-											name='name'
-											id='name'
-											defaultValue={ vaults[currentVault].name }
-										/>
-									</p>
-									<p className={ style['user-input'] }>
-										<label htmlFor='user-prompt'>Custom prompt</label><br/>
-										<textarea
-											name='user-prompt'
-											id='user-prompt'
-											defaultValue={ vaults[currentVault].user_prompt }
-											rows={ 5 }
-										/>
-									</p>
-									<p className={ style.actions }>
-										<button>Save</button>
-										<button
-											onClick={ (ev) => {
-												ev.preventDefault();
-												setModalEditVaultOpen(false);
-											} }
-										>
-											Cancel
-										</button>
-									</p>
-								</form>
+											const json = await response.json() as { success: boolean };
+
+											if (json.success) {
+												setVaults(v => {
+													const vault = v.find(vi => vi.id === vaults[currentVault].id);
+
+													if (!vault) {
+														return;
+													}
+
+													vault.name = form.get('name') as string;
+													vault.user_prompt = form.get('user-prompt') as string;
+												});
+
+												setVaultSettingsOpen(false);
+											}
+										} }
+									>
+										<p className={ style['user-input'] }>
+											<label htmlFor='name'>Vault's name</label><br/>
+											<input
+												type='text'
+												name='name'
+												id='name'
+												defaultValue={ vaults[currentVault].name }
+											/>
+										</p>
+										<p className={ style['user-input'] }>
+											<label htmlFor='user-prompt'>Custom prompt</label><br/>
+											<textarea
+												name='user-prompt'
+												id='user-prompt'
+												defaultValue={ vaults[currentVault].user_prompt }
+												rows={ 5 }
+											/>
+										</p>
+										<p className={ style.actions }>
+											<button>Save</button>
+											<button
+												onClick={ (ev) => {
+													ev.preventDefault();
+													setVaultSettingsOpen(false);
+												} }
+											>
+												Cancel
+											</button>
+										</p>
+									</form>
+								}
+								{ settingsSection === 2 &&
+									<div>
+										<p>
+											Are you sure you want to delete the vault?
+											It'll delete all your chats in the vault, this isn't reversible.
+										</p>
+										<button>I'm sure, delete</button>
+									</div>
+								}
 							</div>
 						</div>
 					</Modal>
