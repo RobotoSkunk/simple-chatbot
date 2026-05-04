@@ -233,6 +233,7 @@ export default function Chat({
 									msg.hideControls = false;
 								}
 							});
+							setAbortController(null);
 							break;
 						}
 						case 'message_data': {
@@ -255,7 +256,6 @@ export default function Chat({
 									userMessageId = chunk.message_id;
 								}
 							});
-
 							break;
 						}
 						case 'error': {
@@ -264,6 +264,7 @@ export default function Chat({
 							messagesCopy.splice(messageIndex, 1);
 
 							setMessages(messagesCopy);
+							setAbortController(null);
 							break;
 						}
 					}
@@ -273,6 +274,7 @@ export default function Chat({
 			if ((error as Error).name !== 'AbortError') {
 				console.error(error);
 			}
+			setAbortController(null);
 		}
 	}
 
@@ -393,14 +395,16 @@ export default function Chat({
 									msg.hideControls = false;
 								}
 							});
+							setAbortController(null);
 							break;
 						}
 						case 'error': {
 							const messagesCopy = [... messages];
-							const messageIndex = messagesCopy.findIndex(m => m.id === ':new_assistant');
+							const messageIndex = messagesCopy.findIndex(m => m.id === message.id);
 							messagesCopy.splice(messageIndex, 1);
 
 							setMessages(messagesCopy);
+							setAbortController(null);
 							break;
 						}
 					}
@@ -410,6 +414,7 @@ export default function Chat({
 			if ((error as Error).name !== 'AbortError') {
 				console.error(error);
 			}
+			setAbortController(null);
 		}
 	}
 
@@ -570,27 +575,68 @@ export default function Chat({
 						className='default'
 					>
 						<div className={ style.circle }></div>
-						{ !busy ?
-							<Image
-								src={ sendIcon }
-								alt=''
-								width={ 20 }
-							/>
-							: <>
-								<Image
-									src={ spinnerIcon }
-									alt=''
-									width={ 20 }
-									className={ style.spinner }
-								/>
-								<Image
-									src={ stopIcon }
-									alt=''
-									width={ 20 }
-									className={ style.stop }
-								/>
-							</>
-						}
+						<AnimatePresence>
+							{ !busy ?
+								<motion.div
+									className={ style['animated-icon'] }
+									style={{
+										x: 0,
+										y: 0,
+									}}
+									key='send-icon'
+
+									initial={{ scale: 0 }}
+									animate={{ scale: 1 }}
+									exit={{ scale: 0 }}
+								>
+									<Image
+										src={ sendIcon }
+										alt=''
+										width={ 24 }
+									/>
+								</motion.div>
+								:
+								<motion.div
+									className={ style['animated-icon'] }
+									style={{
+										x: 0,
+										y: 0,
+									}}
+									key='spinner-icon'
+
+									initial={{ opacity: 0 }}
+									animate={{ opacity: 1 }}
+									exit={{ opacity: 0 }}
+								>
+									<Image
+										src={ spinnerIcon }
+										alt=''
+										width={ 28 }
+										className={ style.spinner }
+									/>
+								</motion.div>
+							}
+							{ abortController !== null &&
+								<motion.div
+									className={ style['animated-icon'] }
+									style={{
+										x: 0,
+										y: 0,
+									}}
+									key='stop-icon'
+
+									initial={{ scale: 0 }}
+									animate={{ scale: 1 }}
+									exit={{ scale: 0 }}
+								>
+									<Image
+										src={ stopIcon }
+										alt=''
+										width={ 20 }
+									/>
+								</motion.div>
+							}
+						</AnimatePresence>
 					</button>
 				</div>
 				<span>
