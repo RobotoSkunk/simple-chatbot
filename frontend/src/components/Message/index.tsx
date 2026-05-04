@@ -1,6 +1,7 @@
 
 import {
 	Children,
+	useEffect,
 	useRef,
 	useState,
 } from 'react';
@@ -98,8 +99,39 @@ export default function Message({
 	onLoadIndex: (index: number, content: string, editedByUser: boolean) => Promise<void>;
 })
 {
-	const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+	const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 	const [ editing, setEditing ] = useState(false);
+
+	function resize()
+	{
+		if (!textAreaRef.current) {
+			return;
+		}
+
+		textAreaRef.current.style.height = '';
+		let height = textAreaRef.current.scrollHeight - 20;
+
+		textAreaRef.current.style.height = height + 'px';
+	}
+
+	useEffect(() =>
+	{
+		resize();
+
+		// if (!textAreaRef.current) {
+		// 	return;
+		// }
+
+		// const rect = textAreaRef.current.getBoundingClientRect();
+		// const messagesContainer = document.getElementById('messages-container') as HTMLDivElement;
+
+		// if (messagesContainer) {
+		// 	messagesContainer.scrollTo({
+		// 		top: rect.bottom,
+		// 		behavior: 'instant',
+		// 	});
+		// }
+	}, [ editing ]);
 
 	function getFormattedDate()
 	{
@@ -150,16 +182,25 @@ export default function Message({
 	}
 
 	return (
-		<div className={ [
-			style.container,
-			style[`role-${role}`],
-		].join(' ') }>
-			<div className={ style.message }>
+		<div
+			className={ [
+				style.container,
+				style[`role-${role}`],
+			].join(' ')
+			}
+		>
+			<div
+				className={ [
+					style.message,
+					editing ? style.editing : undefined,
+				].join(' ') }
+			>
 				<div className={ style.content }>
 					{ editing ?
 						<textarea
 							defaultValue={ content }
-							ref={ textareaRef }
+							ref={ textAreaRef }
+							// onInput={ resize }
 						/>
 						:
 						Children.map(children, child =>
@@ -225,7 +266,7 @@ export default function Message({
 									alt='Confirm changes'
 									disabled={ isBusy }
 									onClick={ async () => {
-										const newContent = textareaRef.current?.value ?? content;
+										const newContent = textAreaRef.current?.value ?? content;
 
 										if (newContent !== content) {
 											const response = await fetch(`${host}/vault/-/chat/-/message/${messageId}`, {

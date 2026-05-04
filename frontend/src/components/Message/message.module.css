@@ -69,21 +69,6 @@
 				background: color-mix(in srgb, var(--background-secondary), var(--background) 50%);
 			}
 		}
-
-		& textarea {
-			border: 0;
-			flex-grow: 1;
-			background: color-mix(in srgb, var(--background-secondary), var(--background) 50%);
-			border-radius: 5px;
-
-			height: auto;
-			outline: none;
-			padding: 10px 20px;
-			resize: vertical;
-
-			color: var(--foreground);
-			font-family: sans-serif;
-		}
 	}
 
 	& .triangle {
@@ -140,6 +125,31 @@
 			padding: 0;
 			opacity: 0.5;
 			font-size: 0.8em;
+		}
+	}
+
+	&.editing {
+		width: 100%;
+
+		& textarea {
+			display: inline-block;
+			position: relative;
+
+			/* border: 0; */
+			flex-grow: 1;
+			background: color-mix(in srgb, var(--background-secondary), var(--background) 50%);
+			/* border-radius: 5px; */
+
+			height: auto;
+			width: calc(100% - 40px);
+			margin: 0;
+
+			outline: none;
+			padding: 10px 20px;
+			resize: vertical;
+
+			color: var(--foreground);
+			font-family: sans-serif;
 		}
 	}
 }

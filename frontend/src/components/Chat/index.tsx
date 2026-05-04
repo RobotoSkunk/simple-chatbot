@@ -126,7 +126,6 @@ export default function Chat({
 		}
 	}, [ messages ]);
 
-
 	async function parseBody(
 		body: globalThis.ReadableStream<Uint8Array<ArrayBuffer>>,
 		callback: (chunk: ChunkResponse) => void)
@@ -443,6 +442,7 @@ export default function Chat({
 		>
 			{ chatId && <>
 				<div
+					id='messages-container'
 					className={ style.messages }
 					ref={ messagesContainerRef }
 				>
