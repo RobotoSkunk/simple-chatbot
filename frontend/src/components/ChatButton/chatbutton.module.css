@@ -30,8 +30,8 @@
 		min-height: 45px;
 	}
 
-	&:hover,
-	&:focus-visible {
+	&:has(> a:hover),
+	&:has(> a:focus-visible) {
 		background-color: var(--bg-color);
 	}
 
