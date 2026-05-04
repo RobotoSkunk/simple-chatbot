@@ -347,77 +347,79 @@ export default function Dashboard({
 						open={ modalEditVaultOpen }
 						onCloseRequest={ () => setModalEditVaultOpen(false) }
 					>
-						<form
-							className={ style['vault-settings'] }
-							onSubmit={ async (ev) => {
-								ev.preventDefault();
-								const form = new FormData(ev.currentTarget);
-
-								const response = await fetch(`${host}/vault/${vaults[currentVault].id}`, {
-									method: 'PATCH',
-									headers: {
-										'Content-Type': 'application/json',
-									},
-									body: JSON.stringify({
-										name: form.get('name'),
-										user_prompt: form.get('user-prompt'),
-									}),
-								});
-
-								const json = await response.json() as { success: boolean };
-
-								if (json.success) {
-									setVaults(v => {
-										const vault = v.find(vi => vi.id === vaults[currentVault].id);
-
-										if (!vault) {
-											return;
-										}
-
-										vault.name = form.get('name') as string;
-										vault.user_prompt = form.get('user-prompt') as string;
-									});
-
-									setModalEditVaultOpen(false);
-								}
-							} }
-						>
+						<div className={ style['vault-settings'] }>
 							<div className={ style.sections }>
 								<button className='default'>General</button>
 								<button className='default'>Directories</button>
 								<button className='default'>Destructive</button>
 							</div>
 							<div className={ style.content }>
-								<p className={ style['user-input'] }>
-									<label htmlFor='name'>Name</label><br/>
-									<input
-										type='text'
-										name='name'
-										id='name'
-										defaultValue={ vaults[currentVault].name }
-									/>
-								</p>
-								<p className={ style['user-input'] }>
-									<label htmlFor='user-prompt'>Custom prompt</label><br/>
-									<textarea
-										name='user-prompt'
-										id='user-prompt'
-										defaultValue={ vaults[currentVault].user_prompt }
-									/>
-								</p>
-								<p className={ style.actions }>
-									<button>Save</button>
-									<button
-										onClick={ (ev) => {
-											ev.preventDefault();
+								<form
+									onSubmit={ async (ev) => {
+										ev.preventDefault();
+										const form = new FormData(ev.currentTarget);
+
+										const response = await fetch(`${host}/vault/${vaults[currentVault].id}`, {
+											method: 'PATCH',
+											headers: {
+												'Content-Type': 'application/json',
+											},
+											body: JSON.stringify({
+												name: form.get('name'),
+												user_prompt: form.get('user-prompt'),
+											}),
+										});
+
+										const json = await response.json() as { success: boolean };
+
+										if (json.success) {
+											setVaults(v => {
+												const vault = v.find(vi => vi.id === vaults[currentVault].id);
+
+												if (!vault) {
+													return;
+												}
+
+												vault.name = form.get('name') as string;
+												vault.user_prompt = form.get('user-prompt') as string;
+											});
+
 											setModalEditVaultOpen(false);
-										} }
-									>
-										Cancel
-									</button>
-								</p>
+										}
+									} }
+								>
+									<p className={ style['user-input'] }>
+										<label htmlFor='name'>Vault's name</label><br/>
+										<input
+											type='text'
+											name='name'
+											id='name'
+											defaultValue={ vaults[currentVault].name }
+										/>
+									</p>
+									<p className={ style['user-input'] }>
+										<label htmlFor='user-prompt'>Custom prompt</label><br/>
+										<textarea
+											name='user-prompt'
+											id='user-prompt'
+											defaultValue={ vaults[currentVault].user_prompt }
+											rows={ 5 }
+										/>
+									</p>
+									<p className={ style.actions }>
+										<button>Save</button>
+										<button
+											onClick={ (ev) => {
+												ev.preventDefault();
+												setModalEditVaultOpen(false);
+											} }
+										>
+											Cancel
+										</button>
+									</p>
+								</form>
 							</div>
-						</form>
+						</div>
 					</Modal>
 				}
 			</ChatsContext.Provider>
