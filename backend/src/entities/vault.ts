@@ -8,14 +8,22 @@ class Vault
 	public name: string;
 	public emote: string | null;
 	public userPrompt: string | null;
+	public aiModel: string | null;
 	public createdAt: Date;
 
-	constructor(id: string, name: string, emote: string | null, userPrompt: string | null, createdAt: Date)
+	constructor(
+		id: string,
+		name: string,
+		emote: string | null,
+		userPrompt: string | null,
+		aiModel: string | null,
+		createdAt: Date)
 	{
 		this._id = id;
 		this.name = name;
 		this.emote = emote;
 		this.userPrompt = userPrompt;
+		this.aiModel = aiModel;
 		this.createdAt = createdAt;
 	}
 
@@ -53,7 +61,7 @@ class Vault
 			.returning([ 'id', 'created_at' ])
 			.executeTakeFirstOrThrow();
 
-		return new Vault(id as string, name, emote, null, created_at as Date);
+		return new Vault(id as string, name, emote, null, null, created_at as Date);
 	}
 
 	public static async getAll()
@@ -64,11 +72,12 @@ class Vault
 			.orderBy('created_at', 'asc')
 			.execute();
 
-		return vaults.map(({ id, name, emote, user_prompt, created_at }) => new Vault(
+		return vaults.map(({ id, name, emote, user_prompt, ai_model, created_at }) => new Vault(
 			id as string,
 			name as string,
 			emote as string | null,
 			user_prompt as string | null,
+			ai_model as string | null,
 			created_at as Date,
 		));
 	}
@@ -90,6 +99,7 @@ class Vault
 			vault.name as string,
 			vault.emote as string | null,
 			vault.user_prompt as string | null,
+			vault.ai_model as string | null,
 			vault.created_at as Date,
 		);
 	}
