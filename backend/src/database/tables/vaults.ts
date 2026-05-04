@@ -8,6 +8,7 @@ export interface DB_Vaults
 	emote?: string | null;
 	created_at?: Date;
 	user_prompt?: string | null;
+	ai_model?: string | null;
 }
 
 export type PartialDB = {
