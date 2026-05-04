@@ -441,17 +441,33 @@ export default function TeSS({
 					/>
 				</g>
 			</motion.g>
-			<AnimatePresence // inkscape:label='thinking'
-			>
+			<AnimatePresence>
 				{ status === 'thinking' &&
-					<motion.g
-						initial={{ scale: 0 }}
-						animate={{ scale: 1 }}
-						exit={{ scale: 0 }}
-						style={{
-							transformOrigin: 'bottom right',
+					<motion.g // inkscape:label='thinking'
+						initial={{
+							scale: 0,
+							x: '40%',
+							y: '45%',
 						}}
+						animate={{
+							scale: 1,
+							x: 0,
+							y: 0,
+						}}
+						exit={{
+							scale: 0,
+							x: '40%',
+							y: '45%',
+						}}
+						key='status-thinking'
 					>
+						<rect
+							style={{ fill: 'transparent' }}
+							width={ 24.402349 }
+							height={ 22.908062 }
+							x={ 3.807188 }
+							y={ 35.568134 }
+						/>
 						<motion.circle // inkscape:label='circle-bottom'
 							style={{ fill: '#ffffff' }}
 							cx='26.249496'
@@ -497,14 +513,12 @@ export default function TeSS({
 						/>
 					</motion.g>
 				}
-			</AnimatePresence>
-			<AnimatePresence // inkscape:label='magnifying-glass'
-			>
 				{ status === 'web_search' &&
-					<motion.g
+					<motion.g // inkscape:label='magnifying-glass'
 						initial={{ scale: 0 }}
 						animate={{ scale: 1 }}
 						exit={{ scale: 0 }}
+						key='status-magnifying-glass'
 					>
 						<motion.g
 							animate={ 'animated' }
@@ -536,6 +550,76 @@ export default function TeSS({
 								/>
 							</g>
 						</motion.g>
+					</motion.g>
+				}
+				{ status === 'typing' &&
+					<motion.g // inkscape:label='speak-bubble'
+						initial={{
+							scale: 0,
+							x: '-8%',
+							y: '50%',
+						}}
+						animate={{
+							scale: 1,
+							x: 0,
+							y: 0,
+						}}
+						exit={{
+							scale: 0,
+							x: '-8%',
+							y: '50%',
+						}}
+						key='status-speak-bubble'
+					>
+					<path // inkscape:label='bubble'
+						style={{ fill: '#ffffff' }}
+						d='m 72.516222,55.804997 c 3.882199,-0.04915 9.86835,-3.05527 11.655641,-6.433226 0,0 12.816809,0.325775 13.564056,-6.674412 0.747247,-7.000188 -5.80426,-8.756425 -12.887061,-8.73929 -7.082801,0.01713 -13.137792,2.194536 -12.816688,7.980476 0.321104,5.785941 7.471543,6.552445 7.471543,6.552445 0.743963,3.258102 -3.688203,6.839961 -6.987491,7.314007 z'
+					/>
+					<motion.circle // inkscape:label='circle-1'
+						style={{ fill: backgroundColor }}
+						id='path3'
+						cx='91.739555'
+						cy='41.665825'
+						r='2.802634'
+						animate={{ scale: 0.3 }}
+						transition={{
+							type: 'tween',
+							repeat: Infinity,
+							duration: 0.6,
+							repeatType: 'mirror',
+							delay: 0.5,
+						}}
+					/>
+					<motion.circle // inkscape:label='circle-2'
+						style={{ fill: backgroundColor }}
+						id='circle7'
+						cx='84.860382'
+						cy='41.665825'
+						r='2.802634'
+						animate={{ scale: 0.3 }}
+						transition={{
+							type: 'tween',
+							repeat: Infinity,
+							duration: 0.6,
+							repeatType: 'mirror',
+							delay: 0.3,
+						}}
+					/>
+					<motion.circle // inkscape:label='circle-3'
+						style={{ fill: backgroundColor }}
+						id='circle8'
+						cx='77.981209'
+						cy='41.665825'
+						r='2.802634'
+						animate={{ scale: 0.3 }}
+						transition={{
+							type: 'tween',
+							repeat: Infinity,
+							duration: 0.6,
+							repeatType: 'mirror',
+							delay: 0.1,
+						}}
+					/>
 					</motion.g>
 				}
 			</AnimatePresence>

@@ -27,15 +27,15 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#505050"
      inkscape:document-units="mm"
-     inkscape:zoom="1.5019781"
-     inkscape:cx="189.08398"
-     inkscape:cy="180.76162"
+     inkscape:zoom="4.2482356"
+     inkscape:cx="108.39794"
+     inkscape:cy="199.0238"
      inkscape:window-width="1920"
      inkscape:window-height="1052"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="g25" />
+     inkscape:current-layer="g24" />
   <defs
      id="defs1">
     <clipPath
@@ -62,7 +62,7 @@
      id="layer2"
      inkscape:label="BG"
      sodipodi:insensitive="true"
-     style="display:inline">
+     style="display:none">
     <rect
        style="fill:#21395d;fill-opacity:1;stroke-width:10;stroke-linejoin:round;paint-order:stroke fill markers"
        id="rect2"
@@ -162,8 +162,7 @@
      inkscape:label="Robot"
      inkscape:groupmode="layer"
      id="g15"
-     style="display:none"
-     sodipodi:insensitive="true">
+     style="display:inline">
     <rect
        style="display:none;fill:#5d2121;fill-opacity:1;stroke:none;stroke-width:5;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
        id="rect10"
@@ -345,6 +344,13 @@
     <g
        id="g24"
        inkscape:label="thinking">
+      <rect
+         style="display:inline;fill:#ff0202;stroke-width:10;stroke-linejoin:round;paint-order:stroke fill markers;fill-opacity:1"
+         id="rect3"
+         width="24.402349"
+         height="22.908062"
+         x="3.807188"
+         y="35.568134" />
       <circle
          style="display:inline;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:8.50724;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
          id="path17"
@@ -385,12 +391,43 @@
          y="79.523041"
          ry="1.2174523" />
     </g>
+    <g
+       id="g9"
+       inkscape:label="speak-bubble">
+      <path
+         style="fill:#ffffff;stroke-width:10;stroke-linejoin:round;paint-order:stroke fill markers"
+         d="m 72.516222,55.804997 c 3.882199,-0.04915 9.86835,-3.05527 11.655641,-6.433226 0,0 12.816809,0.325775 13.564056,-6.674412 0.747247,-7.000188 -5.80426,-8.756425 -12.887061,-8.73929 -7.082801,0.01713 -13.137792,2.194536 -12.816688,7.980476 0.321104,5.785941 7.471543,6.552445 7.471543,6.552445 0.743963,3.258102 -3.688203,6.839961 -6.987491,7.314007 z"
+         id="path1"
+         sodipodi:nodetypes="cczzzcc"
+         inkscape:label="bubble" />
+      <circle
+         style="fill:#21395d;fill-opacity:1;stroke-width:10;stroke-linejoin:round;paint-order:stroke fill markers"
+         id="path3"
+         cx="91.739555"
+         cy="41.665825"
+         r="2.802634"
+         inkscape:label="circle-1" />
+      <circle
+         style="fill:#21395d;fill-opacity:1;stroke-width:10;stroke-linejoin:round;paint-order:stroke fill markers"
+         id="circle7"
+         cx="84.860382"
+         cy="41.665825"
+         r="2.802634"
+         inkscape:label="circle-2" />
+      <circle
+         style="fill:#21395d;fill-opacity:1;stroke-width:10;stroke-linejoin:round;paint-order:stroke fill markers"
+         id="circle8"
+         cx="77.981209"
+         cy="41.665825"
+         r="2.802634"
+         inkscape:label="circle-3" />
+    </g>
   </g>
   <g
      inkscape:label="Icon"
      inkscape:groupmode="layer"
      id="g25"
-     style="display:inline"
+     style="display:none"
      sodipodi:insensitive="true">
     <path
        id="rect4"
