@@ -1,4 +1,8 @@
-# Personal Chatbot
+<center>
+<img src="./assets/TeSS-Nobg.svg" alt="TeSS" height="250">
+<h1>Personal Chatbot</h1>
+</center>
+
 I built this because I saw that PewDiePie video where he made an AI chat
 frontend for himself, so I wanted to do the same because, why not?
 

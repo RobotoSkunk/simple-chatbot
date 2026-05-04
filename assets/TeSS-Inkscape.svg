@@ -8,8 +8,8 @@
    version="1.1"
    id="svg1"
    inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
-   sodipodi:docname="TeSS.svg"
-   inkscape:export-filename="./TeSS-Avatar.png"
+   sodipodi:docname="TeSS-Inkscape.svg"
+   inkscape:export-filename="./TeSS-Nobg.svg"
    inkscape:export-xdpi="1040.384"
    inkscape:export-ydpi="1040.384"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -28,8 +28,8 @@
      inkscape:deskcolor="#505050"
      inkscape:document-units="mm"
      inkscape:zoom="1.5019781"
-     inkscape:cx="172.10637"
-     inkscape:cy="180.09583"
+     inkscape:cx="189.08398"
+     inkscape:cy="180.76162"
      inkscape:window-width="1920"
      inkscape:window-height="1052"
      inkscape:window-x="0"
@@ -76,7 +76,7 @@
      inkscape:label="Robot Icon"
      inkscape:groupmode="layer"
      id="layer1"
-     style="display:inline"
+     style="display:none"
      sodipodi:insensitive="true">
     <rect
        style="display:none;fill:#5d2121;fill-opacity:1;stroke:none;stroke-width:5;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
@@ -390,7 +390,7 @@
      inkscape:label="Icon"
      inkscape:groupmode="layer"
      id="g25"
-     style="display:none"
+     style="display:inline"
      sodipodi:insensitive="true">
     <path
        id="rect4"
