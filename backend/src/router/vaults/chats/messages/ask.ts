@@ -178,6 +178,7 @@ export default function getAskMiddleware(isNewMessage: boolean)
 		let saveTick = maxSaveTick;
 		let thinkingPing: NodeJS.Timeout | undefined = undefined;
 		let finalContent = '';
+		let remainingWebSearchAttempts = 3;
 
 		async function generate()
 		{
@@ -195,7 +196,7 @@ export default function getAskMiddleware(isNewMessage: boolean)
 				messages,
 				stream: true,
 				think: false,
-				tools,
+				tools: remainingWebSearchAttempts >= 0 ? tools : undefined,
 				// options,
 			});
 
@@ -252,6 +253,15 @@ export default function getAskMiddleware(isNewMessage: boolean)
 					const call = chunk.message.tool_calls[0];
 					const name = call.function.name;
 
+					if (name.startsWith('web') && --remainingWebSearchAttempts < 0) {
+						await callFunctionAddMessage(name, JSON.stringify({
+							error: 'Maximum number of web tools usage exceeded.'
+						}), thinking, call.function.arguments);
+
+						await generate();
+						return;
+					}
+
 					switch (name) {
 						case 'web_search': {
 							const arg = call.function.arguments as { query: string };
@@ -268,7 +278,7 @@ export default function getAskMiddleware(isNewMessage: boolean)
 								console.error(error);
 
 								await callFunctionAddMessage(name, JSON.stringify({
-									error: 'something went wrong when trying to execute web_search'
+									error: 'Something went wrong when trying to execute web_search'
 								}), thinking, call.function.arguments);
 							} finally {
 								await generate();
@@ -290,7 +300,7 @@ export default function getAskMiddleware(isNewMessage: boolean)
 								console.error(error);
 
 								await callFunctionAddMessage(name, JSON.stringify({
-									error: 'something went wrong when trying to execute web_fetch'
+									error: 'Something went wrong when trying to execute web_fetch'
 								}), thinking, call.function.arguments);
 							} finally {
 								await generate();
