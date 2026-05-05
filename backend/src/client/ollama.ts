@@ -27,6 +27,7 @@ function getMainPrompt(userPrompt?: string)
 [Developer="RobotoSkunk"]
 [Language="English", "Spanish"]
 [Current Date="${ new Date().toISOString() }"]
+[Timezone="${ Intl.DateTimeFormat().resolvedOptions().timeZone }"]
 
 User Data:
 [Name="${ os.userInfo().username }"]

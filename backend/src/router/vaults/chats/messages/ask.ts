@@ -148,7 +148,7 @@ export default function getAskMiddleware(isNewMessage: boolean)
 			});
 		}
 
-		async function callFunctionAddMessage(
+		function callFunctionAddMessage(
 			name: string,
 			result: string,
 			thinking: string,
@@ -178,7 +178,10 @@ export default function getAskMiddleware(isNewMessage: boolean)
 		let saveTick = maxSaveTick;
 		let thinkingPing: NodeJS.Timeout | undefined = undefined;
 		let finalContent = '';
+	
 		let remainingWebSearchAttempts = 3;
+		let enableWebSearch = true;
+		let finished = false;
 
 		async function generate()
 		{
@@ -196,7 +199,7 @@ export default function getAskMiddleware(isNewMessage: boolean)
 				messages,
 				stream: true,
 				think: false,
-				tools: remainingWebSearchAttempts >= 0 ? tools : undefined,
+				tools: enableWebSearch ? tools : undefined,
 				// options,
 			});
 
@@ -242,10 +245,11 @@ export default function getAskMiddleware(isNewMessage: boolean)
 
 			res.removeAllListeners('close');
 			res.on('close', () => {
-				console.log('close');
 				stream.abort();
 
-				saveMessage(false);
+				if (!finished) {
+					saveMessage(false);
+				}
 			});
 
 			for await (const chunk of stream) {
@@ -254,9 +258,8 @@ export default function getAskMiddleware(isNewMessage: boolean)
 					const name = call.function.name;
 
 					if (name.startsWith('web') && --remainingWebSearchAttempts < 0) {
-						await callFunctionAddMessage(name, JSON.stringify({
-							error: 'Maximum number of web tools usage exceeded.'
-						}), thinking, call.function.arguments);
+						callFunctionAddMessage(name, 'Maximum number of web tools usage exceeded.', thinking, call.function.arguments);
+						enableWebSearch = false;
 
 						await generate();
 						return;
@@ -273,12 +276,12 @@ export default function getAskMiddleware(isNewMessage: boolean)
 									maxResults: 5,
 								});
 
-								await callFunctionAddMessage(name, JSON.stringify(searchResponse), thinking, call.function.arguments);
+								callFunctionAddMessage(name, JSON.stringify(searchResponse), thinking, call.function.arguments);
 							} catch (error) {
 								console.error(error);
 
-								await callFunctionAddMessage(name, JSON.stringify({
-									error: 'Something went wrong when trying to execute web_search'
+								callFunctionAddMessage(name, JSON.stringify({
+									error: 'Something went wrong when trying to execute web_search',
 								}), thinking, call.function.arguments);
 							} finally {
 								await generate();
@@ -295,12 +298,12 @@ export default function getAskMiddleware(isNewMessage: boolean)
 									url: arg.url,
 								});
 
-								await callFunctionAddMessage(name, JSON.stringify(searchResponse), thinking, call.function.arguments);
+								callFunctionAddMessage(name, JSON.stringify(searchResponse), thinking, call.function.arguments);
 							} catch (error) {
 								console.error(error);
 
-								await callFunctionAddMessage(name, JSON.stringify({
-									error: 'Something went wrong when trying to execute web_fetch'
+								callFunctionAddMessage(name, JSON.stringify({
+									error: 'Something went wrong when trying to execute web_fetch',
 								}), thinking, call.function.arguments);
 							} finally {
 								await generate();
@@ -356,6 +359,7 @@ export default function getAskMiddleware(isNewMessage: boolean)
 				}
 			}
 
+			finished = true;
 			await saveMessage(true);
 		}
 
