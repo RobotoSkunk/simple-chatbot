@@ -154,11 +154,11 @@ export default function getAskMiddleware(isNewMessage: boolean)
 			thinking: string,
 			args?: { [key: string]: any; })
 		{
-			messages.push({
-				role: 'assistant',
-				content: '',
-				thinking,
-			});
+			// messages.push({
+			// 	role: 'assistant',
+			// 	content: '',
+			// 	thinking,
+			// });
 
 			messages.push(
 				{
@@ -178,7 +178,7 @@ export default function getAskMiddleware(isNewMessage: boolean)
 		let saveTick = maxSaveTick;
 		let thinkingPing: NodeJS.Timeout | undefined = undefined;
 		let finalContent = '';
-	
+
 		let remainingWebSearchAttempts = 3;
 		let enableWebSearch = true;
 		let finished = false;
@@ -193,6 +193,8 @@ export default function getAskMiddleware(isNewMessage: boolean)
 			{
 				sendDataChunk({ type: 'status', status: 'thinking' });
 			}, 1000);
+
+			console.log(messages);
 
 			const stream = await ollama.chat({
 				model,
@@ -258,9 +260,7 @@ export default function getAskMiddleware(isNewMessage: boolean)
 					const name = call.function.name;
 
 					if (name.startsWith('web') && --remainingWebSearchAttempts < 0) {
-						callFunctionAddMessage(name, 'Maximum number of web tools usage exceeded.', thinking, call.function.arguments);
 						enableWebSearch = false;
-
 						await generate();
 						return;
 					}
