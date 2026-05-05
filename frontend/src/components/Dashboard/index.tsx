@@ -482,7 +482,45 @@ export default function Dashboard({
 											Are you sure you want to delete the vault?
 											It'll delete all your chats in the vault, this isn't reversible.
 										</p>
-										<button>I'm sure, delete</button>
+										<p>
+											<button
+												onClick={ async () => {
+													const answer = confirm(`Are you sure you want to delete this Vault?`);
+
+													if (answer) {
+														const response = await fetch(`${host}/vault/${vaults[currentVault].id}`, {
+															method: 'DELETE'
+														});
+
+														const json = await response.json() as { error?: string };
+
+														if (!json.error) {
+															const tmpVaults = [ ...vaults ];
+															tmpVaults.splice(currentVault);
+
+															setVaults(tmpVaults);
+
+															if (tmpVaults.length > 0) {
+																localStorage.setItem('current_vault', tmpVaults[0].id);
+																setCurrentVault(0);
+
+																router.push('/');
+
+																setVaultSettingsOpen(false);
+															} else {
+																router.push('/setup');
+															}
+															return;
+														}
+
+														console.error(json.error);
+														alert(json.error);
+													}
+												} }
+											>
+												I'm sure, delete
+											</button>
+										</p>
 									</div>
 								}
 							</div>

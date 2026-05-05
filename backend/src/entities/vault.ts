@@ -77,6 +77,14 @@ class Vault
 		await Chat.getAllFromVault(this._id);
 	}
 
+	public async delete()
+	{
+		await database.conn
+			.deleteFrom('vaults')
+			.where('id', '=', this._id)
+			.execute();
+	}
+
 	public static async register(name: string, emote: string | null)
 	{
 		const { id, created_at } = await database.conn

@@ -16,6 +16,7 @@ import chats_get_one from './vaults/chats/get-one';
 import chats_edit from './vaults/chats/edit';
 
 import vaults_create from './vaults/create';
+import vaults_delete from './vaults/delete';
 import vaults_edit from './vaults/edit';
 import vaults_list_all from './vaults/list-all';
 
@@ -40,6 +41,7 @@ router.patch('/vault/:vaultId/chat/:chatId', chats_edit);
 router.get('/vaults', vaults_list_all);
 router.post('/vault', vaults_create);
 router.patch('/vault/:vaultId', vaults_edit);
+router.delete('/vault/:vaultId', vaults_delete);
 
 router.get('/ollama/models', ollama_models);
 

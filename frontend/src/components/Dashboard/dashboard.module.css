@@ -143,6 +143,11 @@
 
 	flex-grow: 1;
 
+	& p {
+		margin-left: 10px;
+		margin-right: 10px;
+	}
+
 	& .sections,
 	& .content {
 		flex-grow: 1;
@@ -183,11 +188,17 @@
 			flex-direction: column;
 			gap: 3px;
 			padding: 5px 10px;
+
+			margin-left: 0;
+			margin-right: 0;
 		}
 
 		& .actions {
 			display: flex;
 			justify-content: flex-end;
+
+			margin-left: 0;
+			margin-right: 0;
 
 			padding: 10px 25px;
 		}
