@@ -15,6 +15,7 @@ export default async function(req: Request, res: Response)
 		name?: string;
 		emote?: string;
 		user_prompt?: string;
+		ai_model?: string;
 	} = req.body;
 
 	const vault = await Vault.getById(vaultId);
@@ -36,6 +37,10 @@ export default async function(req: Request, res: Response)
 
 	if (data.user_prompt) {
 		vault.userPrompt = data.user_prompt;
+	}
+
+	if (data.ai_model) {
+		await vault.setAiModel(data.ai_model);
 	}
 
 	await vault.syncToDatabase();

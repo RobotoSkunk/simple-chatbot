@@ -10,9 +10,8 @@ import {
 } from 'ollama';
 
 import {
-	model,
 	ollama,
-	options,
+	// options,
 	getMainPrompt,
 } from '../../../../client/ollama';
 
@@ -81,6 +80,13 @@ export default function getAskMiddleware(isNewMessage: boolean)
 			res.write(JSON.stringify(data) + '\n');
 		}
 
+		if (!vault) {
+			res.status(403).json({
+				error: 'Vault ID not found',
+			});
+			return;
+		}
+
 		if (!chat) {
 			res.status(403).json({
 				error: 'Chat ID not found',
@@ -101,12 +107,13 @@ export default function getAskMiddleware(isNewMessage: boolean)
 			}
 		}
 
+		const model = await vault.getAiModel();
 		const dbMessages = await chat.loadMessages(dbMessage?.createdAt);
 
 		const messages: OllamaMessage[] = [
 			{
 				role: 'system',
-				content: getMainPrompt(vault?.userPrompt ?? undefined),
+				content: getMainPrompt(vault.userPrompt ?? undefined),
 			},
 			...dbMessages?.map((v) => ({
 				role: v.role || '',
@@ -189,7 +196,7 @@ export default function getAskMiddleware(isNewMessage: boolean)
 				stream: true,
 				think: false,
 				tools,
-				options,
+				// options,
 			});
 
 			let thinking = '';

@@ -1,4 +1,8 @@
 
+import {
+	ollama,
+} from '../client/ollama';
+
 import database from '../client/database';
 import Chat from './chat';
 
@@ -8,7 +12,7 @@ class Vault
 	public name: string;
 	public emote: string | null;
 	public userPrompt: string | null;
-	public aiModel: string | null;
+	public _aiModel: string | null;
 	public createdAt: Date;
 
 	constructor(
@@ -23,13 +27,35 @@ class Vault
 		this.name = name;
 		this.emote = emote;
 		this.userPrompt = userPrompt;
-		this.aiModel = aiModel;
+		this._aiModel = aiModel;
 		this.createdAt = createdAt;
 	}
 
 	public get id()
 	{
 		return this._id;
+	}
+
+	public async setAiModel(model: string)
+	{
+		this._aiModel = await this._parseModel(model);
+	}
+
+	public async getAiModel()
+	{
+		return await this._parseModel(this._aiModel ?? '');
+	}
+
+	private async _parseModel(model: string)
+	{
+		const { models } = await ollama.list();
+		const modelIndex = models.findIndex((m) => m.model === model);
+
+		if (modelIndex >= 0) {
+			return model;
+		}
+
+		return models[0].model ?? '';
 	}
 
 	public async syncToDatabase()
@@ -40,6 +66,7 @@ class Vault
 				name: this.name,
 				emote: this.emote,
 				user_prompt: this.userPrompt,
+				ai_model: await this.getAiModel(),
 			})
 			.where('id', '=', this._id)
 			.execute();

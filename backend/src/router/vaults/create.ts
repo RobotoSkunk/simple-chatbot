@@ -20,6 +20,7 @@ export default async function(req: Request, res: Response)
 		name: newVault.name,
 		emote: newVault.emote,
 		user_prompt: newVault.userPrompt,
+		ai_model: null,
 		created_at: newVault.createdAt,
 	});
 }

@@ -1,12 +1,19 @@
 
 declare global
 {
+	interface ModelData
+	{
+		id: string;
+		name: string;
+	}
+
 	interface VaultData
 	{
 		id: string;
 		name: string;
 		emote: string;
 		user_prompt: string;
+		ai_model: string;
 		created_at: number;
 	}
 

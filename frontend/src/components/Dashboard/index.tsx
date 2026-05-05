@@ -69,6 +69,7 @@ export default function Dashboard({
 	const [ currentVault, setCurrentVault ] = useState(0);
 
 	const [ chats, setChats ] = useState<ChatData[]>([]);
+	const [ models, setModels ] = useState<ModelData[]>([]);
 
 	const [ vaultSettingsOpen, setVaultSettingsOpen ] = useState(false);
 	const [ settingsSection, setSettingsSection ] = useState(0);
@@ -81,6 +82,11 @@ export default function Dashboard({
 			const list = await response.json() as VaultData[];
 
 			setVaults(list);
+
+			const responseModels = await fetch(`${host}/ollama/models`);
+			const modelsList = await responseModels.json() as ModelData[];
+
+			setModels(modelsList);
 		})();
 	}, [ ]);
 
@@ -387,6 +393,10 @@ export default function Dashboard({
 											ev.preventDefault();
 											const form = new FormData(ev.currentTarget);
 
+											if (!ev.currentTarget.checkValidity()) {
+												ev.currentTarget.reportValidity();
+											}
+
 											const response = await fetch(`${host}/vault/${vaults[currentVault].id}`, {
 												method: 'PATCH',
 												headers: {
@@ -395,6 +405,7 @@ export default function Dashboard({
 												body: JSON.stringify({
 													name: form.get('name'),
 													user_prompt: form.get('user-prompt'),
+													ai_model: form.get('ai-model'),
 												}),
 											});
 
@@ -410,6 +421,7 @@ export default function Dashboard({
 
 													vault.name = form.get('name') as string;
 													vault.user_prompt = form.get('user-prompt') as string;
+													vault.ai_model = form.get('user-prompt') as string;
 												});
 
 												setVaultSettingsOpen(false);
@@ -423,6 +435,7 @@ export default function Dashboard({
 												name='name'
 												id='name'
 												defaultValue={ vaults[currentVault].name }
+												required
 											/>
 										</p>
 										<p className={ style['user-input'] }>
@@ -433,6 +446,22 @@ export default function Dashboard({
 												defaultValue={ vaults[currentVault].user_prompt }
 												rows={ 5 }
 											/>
+										</p>
+										<p className={ style['user-input'] }>
+											<label htmlFor='user-prompt'>AI Model</label><br/>
+											<select
+												name='ai-model'
+												defaultValue={ vaults[currentVault].ai_model }
+											>
+												{ models.map((model, i) => (
+													<option
+														key={ i }
+														value={ model.id }
+													>
+														{ model.name }
+													</option>
+												)) }
+											</select>
 										</p>
 										<p className={ style.actions }>
 											<button>Save</button>

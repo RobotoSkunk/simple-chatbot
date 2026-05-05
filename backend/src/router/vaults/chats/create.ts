@@ -5,12 +5,12 @@ import {
 } from 'express';
 
 import {
-	model,
-	options,
+	// options,
 	ollama,
 } from '../../../client/ollama';
 
 import Chat from '../../../entities/chat';
+import Vault from '../../../entities/vault';
 
 
 const prompt =
@@ -21,7 +21,6 @@ Don't write quotes. Don't use emojis.`;
 export default async function(req: Request, res: Response)
 {
 	const vaultId = req.params.vaultId as string;
-	console.log(vaultId);
 
 	const data: {
 		content: string;
@@ -29,9 +28,19 @@ export default async function(req: Request, res: Response)
 
 	const color = Math.floor(Math.random() * 0xffffff);
 
+	const vault = await Vault.getById(vaultId);
+	if (!vault) {
+		res.status(403).json({
+			error: 'Vault ID not found',
+		});
+		return;
+	}
+
+	const model = await vault.getAiModel();
+
 	const response = await ollama.chat({
 		model,
-		options,
+		// options,
 		messages: [
 			{
 				role: 'system',

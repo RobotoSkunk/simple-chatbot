@@ -19,6 +19,8 @@ import vaults_create from './vaults/create';
 import vaults_edit from './vaults/edit';
 import vaults_list_all from './vaults/list-all';
 
+import ollama_models from './ollama/models';
+
 
 const router = Router();
 
@@ -38,6 +40,8 @@ router.patch('/vault/:vaultId/chat/:chatId', chats_edit);
 router.get('/vaults', vaults_list_all);
 router.post('/vault', vaults_create);
 router.patch('/vault/:vaultId', vaults_edit);
+
+router.get('/ollama/models', ollama_models);
 
 export {
 	router,

@@ -12,24 +12,12 @@ const ollama = new Ollama({
 	},
 });
 
-// const model = 'gemma4';
-const model = process.env.AI_MODEL as string;
-
 // const options: Partial<OllamaOptions> = {
 // 	temperature: 1,
 // 	top_p: 0.98,
 // 	top_k: 100,
 // 	repeat_penalty: 1.2,
 // };
-
-const options: Partial<OllamaOptions> = {
-	temperature: 0.7,
-	top_p: 0.8,
-	top_k: 20,
-	repeat_penalty: 1.2,
-	presence_penalty: 1.5,
-};
-
 
 function getMainPrompt(userPrompt?: string)
 {
@@ -60,8 +48,7 @@ ${ userPrompt ?? '[None]' }
 }
 
 export {
-	model,
 	ollama,
-	options,
+	// options,
 	getMainPrompt,
 };

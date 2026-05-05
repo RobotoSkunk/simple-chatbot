@@ -48,6 +48,7 @@ main {
 
 button:not(.default),
 input:not(.default),
+select:not(.default),
 textarea:not(.default) {
 	border-radius: 8px;
 	border: 0;
@@ -68,7 +69,8 @@ textarea:not(.default) {
 	}
 }
 
-button:not(.default) {
+button:not(.default),
+select:not(.default) {
 	cursor: pointer;
 
 	&:hover,
