@@ -1,0 +1,103 @@
+<mxfile host="65bd71144e">
+    <diagram id="aTqvu5-7_8IKsCokMM-U" name="Communication">
+        <mxGraphModel dx="929" dy="473" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};participant=umlActor;" parent="1" vertex="1">
+                    <mxGeometry x="90" y="104" width="20" height="616" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Backend" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+                    <mxGeometry x="540" y="108" width="100" height="616" as="geometry"/>
+                </mxCell>
+                <mxCell id="YAbASeOVda8-7BTgC0JG-12" value="" style="html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="3" vertex="1">
+                    <mxGeometry x="45" y="130" width="10" height="400" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Frontend" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+                    <mxGeometry x="290" y="108" width="100" height="616" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Ollama" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+                    <mxGeometry x="780" y="108" width="100" height="616" as="geometry"/>
+                </mxCell>
+                <mxCell id="YAbASeOVda8-7BTgC0JG-5" value="Chat communcation" style="text;align=center;fontStyle=1;verticalAlign=middle;spacingLeft=3;spacingRight=3;strokeColor=none;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontSize=24;" parent="1" vertex="1">
+                    <mxGeometry x="220" y="20" width="729" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="YAbASeOVda8-7BTgC0JG-7" value="New message" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" source="2" edge="1">
+                    <mxGeometry width="80" relative="1" as="geometry">
+                        <mxPoint x="110" y="188" as="sourcePoint"/>
+                        <mxPoint x="340" y="188" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="YAbASeOVda8-7BTgC0JG-8" value="New encrypted message" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" target="3" edge="1">
+                    <mxGeometry width="80" relative="1" as="geometry">
+                        <mxPoint x="340" y="218" as="sourcePoint"/>
+                        <mxPoint x="586.5" y="218" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="YAbASeOVda8-7BTgC0JG-9" value="Store new encrypted message" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+                    <mxGeometry width="80" relative="1" as="geometry">
+                        <mxPoint x="595" y="250" as="sourcePoint"/>
+                        <mxPoint x="1069.5" y="250" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="YAbASeOVda8-7BTgC0JG-10" value="Database" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={&quot;curved&quot;:0,&quot;rounded&quot;:0};" parent="1" vertex="1">
+                    <mxGeometry x="1020" y="108" width="100" height="616" as="geometry"/>
+                </mxCell>
+                <mxCell id="YAbASeOVda8-7BTgC0JG-11" value="Encrypted chat history" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1069.79" y="330" as="sourcePoint"/>
+                        <mxPoint x="595" y="330" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="YAbASeOVda8-7BTgC0JG-13" value="Unencrypted chat history" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+                    <mxGeometry width="80" relative="1" as="geometry">
+                        <mxPoint x="595" y="370" as="sourcePoint"/>
+                        <mxPoint x="829.5" y="370" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="YAbASeOVda8-7BTgC0JG-15" value="Request chat history" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;entryX=0.5;entryY=0.263;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" edge="1">
+                    <mxGeometry width="80" relative="1" as="geometry">
+                        <mxPoint x="595" y="289.99800000000005" as="sourcePoint"/>
+                        <mxPoint x="1070" y="289.99800000000005" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="YAbASeOVda8-7BTgC0JG-16" value="AI Response" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="829.5" y="410.0000000000001" as="sourcePoint"/>
+                        <mxPoint x="595" y="410.0000000000001" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="YAbASeOVda8-7BTgC0JG-20" value="Store encrypted new AI message" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" parent="1" edge="1">
+                    <mxGeometry width="80" relative="1" as="geometry">
+                        <mxPoint x="595" y="570" as="sourcePoint"/>
+                        <mxPoint x="1069.5" y="570" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="YAbASeOVda8-7BTgC0JG-21" value="Encrypted AI tokens" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="584.5" y="440.0000000000001" as="sourcePoint"/>
+                        <mxPoint x="339.81034482758605" y="440.0000000000002" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="YAbASeOVda8-7BTgC0JG-22" value="Unencrypted AI tokens" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="339.5" y="460.0000000000001" as="sourcePoint"/>
+                        <mxPoint x="99.81034482758628" y="460.0000000000001" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="YAbASeOVda8-7BTgC0JG-23" value="Finish signal" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="829.5" y="490.0000000000001" as="sourcePoint"/>
+                        <mxPoint x="595" y="490.0000000000001" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="6" value="Encrypted new AI message" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;" edge="1" parent="1">
+                    <mxGeometry width="80" relative="1" as="geometry">
+                        <mxPoint x="340" y="530" as="sourcePoint"/>
+                        <mxPoint x="590" y="530" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
