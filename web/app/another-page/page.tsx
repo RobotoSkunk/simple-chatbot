@@ -1,6 +1,8 @@
-import { Link } from 'react-router';
+import {
+	Link,
+} from 'react-router';
 
-export default function Page()
+export default function PageAnotherPage()
 {
 	return (<>
 		<h1>You're now on another page!</h1>

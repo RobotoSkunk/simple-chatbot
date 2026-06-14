@@ -1,18 +1,14 @@
-import { Elysia } from 'elysia';
+import path from 'path';
 
-import indexHTML from '@web/index.html';
+import api from './api';
+import webapp from '@web/index.html';
 
-export const app = new Elysia()
-	.get('/', { message: 'Something over here!' })
-	.get('/user', { name: 'Pablo', lastname: 'Contreras' })
-	.get('/password', { error: 'Wrong password.' })
-	.listen(8085, () => console.log('Elysia is ready!'));
-
-Bun.serve({
-	port: 8080,
+const app = Bun.serve({
 	routes: {
-		'/*': indexHTML,
+		'/*': webapp,
+		'/api/*': api.handle,
+		'/favicon.ico': Bun.file(path.join(process.cwd(), 'web', 'favicon.ico')),
 	},
 });
 
-console.log('Bun is ready!');
+console.log(`Server running at http://127.0.0.1:${app.port}`);

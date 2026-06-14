@@ -23,14 +23,15 @@
     "noImplicitOverride": true,
 
     "paths": {
-      "@web/*": [ "./web/*" ]
+      "@web/*": [ "./web/*" ],
+      "@app/*": [ "./web/app/*" ],
     },
 
     // Some stricter flags (disabled by default)
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false
+    "noPropertyAccessFromIndexSignature": false,
   },
 
-  "exclude": ["docs", "assets", "dist", "node_modules"]
+  "exclude": ["docs", "assets", "dist", "node_modules"],
 }
