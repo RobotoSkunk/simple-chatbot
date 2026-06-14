@@ -1,12 +1,18 @@
 import { Elysia } from 'elysia';
-import { staticPlugin } from '@elysia/static';
+
+import indexHTML from '@web/index.html';
 
 export const app = new Elysia()
-	.use(
-		await staticPlugin({
-			prefix: '/',
-			assets: 'web',
-			bunFullstack: true,
-		}
-	))
-	.listen(3000, () => console.log('Running!'));
+	.get('/', { message: 'Something over here!' })
+	.get('/user', { name: 'Pablo', lastname: 'Contreras' })
+	.get('/password', { error: 'Wrong password.' })
+	.listen(8085, () => console.log('Elysia is ready!'));
+
+Bun.serve({
+	port: 8080,
+	routes: {
+		'/*': indexHTML,
+	},
+});
+
+console.log('Bun is ready!');
