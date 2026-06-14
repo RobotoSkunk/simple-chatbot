@@ -6,7 +6,6 @@
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
-    "@elysia/static": "^1.4.11",
     "elysia": "^1.4.28",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
