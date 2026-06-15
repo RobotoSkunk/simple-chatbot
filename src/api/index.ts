@@ -1,11 +1,34 @@
 import {
 	Elysia,
+	t,
 } from 'elysia';
 
+import ollama from 'ollama';
+
 const api = new Elysia({ prefix: '/api' })
-	.get('/', { message: 'Something over here!' })
-	.get('/user', { name: 'Pablo', lastname: 'Contreras' })
-	.get('/time', () => ({ timestamp: Date.now(), time: new Date() }))
-	.get('/password', { error: 'Wrong password.' });
+	.post('/ask', async function*({ set, body })
+		{
+			set.headers['content-type'] = 'text/plain';
+
+			const stream = await ollama.generate({
+				model: 'qwen3.5',
+				prompt: body.question,
+				stream: true,
+				think: false,
+			});
+
+			for await (const chunk of stream) {
+				yield {
+					data: chunk.response,
+				};
+				yield '\0';
+			}
+		},
+		{
+			body: t.Object({
+				question: t.Readonly(t.String()),
+			}),
+		}
+	);
 
 export default api;
