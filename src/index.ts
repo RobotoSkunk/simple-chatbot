@@ -1,6 +1,8 @@
 import path from 'path';
 
 import api from './api';
+import { startTray } from './tray';
+
 import webapp from '@web/index.html';
 
 const app = Bun.serve({
@@ -11,4 +13,5 @@ const app = Bun.serve({
 	},
 });
 
+await startTray(app);
 console.log(`Server running at http://127.0.0.1:${app.port}`);

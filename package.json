@@ -7,9 +7,11 @@
   },
   "dependencies": {
     "elysia": "^1.4.28",
+    "open": "^11.0.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "react-router": "^7.17.0"
+    "react-router": "^7.17.0",
+    "tray-hook": "^1.1.1"
   },
   "devDependencies": {
     "@types/bun": "latest",
