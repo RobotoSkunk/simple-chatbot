@@ -1,4 +1,5 @@
 import {
+	useState,
 	useRef,
 } from 'react';
 
@@ -21,6 +22,7 @@ export default function PageAsk()
 {
 	const [ answer, setAnswer ] = useImmer('Ask anything!');
 	const inputRef = useRef<HTMLInputElement | null>(null);
+	const [ abortController, setAbortController ] = useState<AbortController | null>(null);
 
 	async function buttonHandler()
 	{
@@ -30,24 +32,33 @@ export default function PageAsk()
 
 		setAnswer('');
 
-		const response = await fetch('/api/ask', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ question: inputRef.current.value }),
-		});
+		const controller = new AbortController();
+		setAbortController(controller);
 
-		const stream = response.body!.pipeThrough(new TextDecoderStream('utf-8')) as ReadableStream;
+		try {
+			const response = await fetch('/api/ask', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ question: inputRef.current.value }),
+				signal: controller.signal,
+			});
 
-		for await (const value of stream) {
-			const parts: string[] = (value as string).split('\0').filter(v => v.length > 0);
+			const stream = response.body!.pipeThrough(new TextDecoderStream('utf-8')) as ReadableStream;
 
-			for (const part of parts) {
-				const chunk = JSON.parse(part) as { data: string };
+			for await (const value of stream) {
+				const parts: string[] = (value as string).split('\0').filter(v => v.length > 0);
 
-				setAnswer(ans => ans + chunk.data);
+				for (const part of parts) {
+					const chunk = JSON.parse(part) as { data: string };
+
+					setAnswer(ans => ans + chunk.data);
+				}
 			}
+		} catch (error) {
+			console.error(error);
+			setAbortController(null);
 		}
 	}
 
@@ -58,6 +69,7 @@ export default function PageAsk()
 		</p>
 		<p>
 			<button onClick={ buttonHandler }>Get answer</button>
+			<button onClick={ () => abortController?.abort() }>Abort</button>
 		</p>
 		<p>
 			<Markdown
