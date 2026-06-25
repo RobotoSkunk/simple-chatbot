@@ -12,6 +12,7 @@ const app = Bun.serve({
 		'/favicon.ico': Bun.file(path.join(process.cwd(), 'web', 'favicon.ico')),
 	},
 	idleTimeout: 60,
+	development: true,
 });
 
 await startTray(app);

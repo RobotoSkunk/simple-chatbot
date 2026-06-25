@@ -1,0 +1,140 @@
+@import url(../assets/css/font/noto-sans.css);
+
+:root {
+	--background: #010409;
+	--foreground: #eef2fa;
+	--foreground-disabled: #ccced2;
+
+	--input-background: #0d1117;
+
+	--button-background: #232d3d;
+	--button-background-active: #344258;
+	--button-border: #5e6776;
+
+	--button-success-background: #065f46;
+	--button-success-background-active: #107156;
+	--button-success-border: #44a58a;
+
+	--button-danger-background: #991b1b;
+	--button-danger-background-active: #bb3232;
+	--button-danger-border: #b26161;
+
+	--link: #a5f3fc;
+	--link-active: #fda4af;
+	--link-visited: #d8b4fe;
+}
+
+* {
+	font-size: 1em;
+	padding: 0;
+	margin: 0;
+	font-family: 'NotoSans';
+	color: var(--foreground);
+
+	&:disabled {
+		color: var(--foreground-disabled);
+		cursor: not-allowed !important;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--link);
+	}
+}
+
+
+body {
+	background: var(--background);
+	color: var(--foreground);
+
+	overflow: hidden;
+}
+
+h1 {
+	font-size: 1.7em;
+	margin-top: 14px;
+	margin-bottom: 7px;
+}
+
+h2 { font-size: 1.6em }
+h3 { font-size: 1.5em }
+h4 { font-size: 1.4em }
+h5 { font-size: 1.3em }
+h6 { font-size: 1.2em }
+
+h2, h3, h4, h5, h6 {
+	margin-top: 8px;
+	margin-bottom: 4px;
+}
+
+p { margin: 8px 0 }
+
+a:link { color: var(--link) }
+a:active { color: var(--link-active) }
+a:visited { color: var(--link-visited) }
+
+button {
+	background: var(--button-background);
+	border: 1px solid var(--button-border);
+
+	margin: 2px;
+	padding: 7px 19px;
+	border-radius: 6px;
+
+	min-width: 80px;
+
+	cursor: pointer;
+
+	transition: background 0.2s;
+
+	&:hover,
+	&:focus-visible {
+		background: var(--button-background-active);
+	}
+
+	&.success {
+		background: var(--button-success-background);
+		border-color: var(--button-success-border);
+
+		&:hover,
+		&:focus-visible {
+			background: var(--button-success-background-active);
+		}
+	}
+
+	&.danger {
+		background: var(--button-danger-background);
+		border-color: var(--button-danger-border);
+
+		&:hover,
+		&:focus-visible {
+			background: var(--button-danger-background-active);
+		}
+	}
+
+	&:disabled:hover,
+	&:disabled:focus-visible {
+		background: var(--button-background);
+
+		&.success {
+			background: var(--button-success-background);
+		}
+
+		&.danger {
+			background: var(--button-danger-background);
+		}
+	}
+}
+
+input,
+select {
+	background: var(--button-background);
+	border: 1px solid var(--button-border);
+
+	margin: 2px;
+	padding: 7px 9px;
+	border-radius: 6px;
+
+	min-width: 80px;
+
+	transition: background 0.2s;
+}

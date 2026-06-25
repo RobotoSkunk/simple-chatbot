@@ -1,0 +1,8 @@
+
+@font-face {
+	font-family: 'NotoSans';
+	src: url('./bin/NotoSans.woff2') format('woff2'),
+		url('./bin/NotoSans.ttf') format('ttf');
+	font-style: normal;
+	font-display: swap;
+}

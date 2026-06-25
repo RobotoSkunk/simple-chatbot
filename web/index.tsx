@@ -18,7 +18,7 @@ import PageHome from '@app/page';
 import PageAnotherPage from '@app/another-page/page';
 import PageAsk from '@app/ask/page';
 
-import.meta.hot.data.root ??= createRoot(document.body).render(
+(import.meta.hot.data.root ??= createRoot(document.body)).render(
 	<StrictMode>
 		<BrowserRouter>
 			<Routes>
