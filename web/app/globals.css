@@ -31,6 +31,8 @@
 	font-family: 'NotoSans';
 	color: var(--foreground);
 
+	outline: none;
+
 	&:disabled {
 		color: var(--foreground-disabled);
 		cursor: not-allowed !important;
@@ -38,6 +40,7 @@
 
 	&:focus-visible {
 		outline: 2px solid var(--link);
+		outline-offset: 2px;
 	}
 }
 
