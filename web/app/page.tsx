@@ -19,7 +19,7 @@ export default function PageHome()
 			<Link to='/ask'>Go to ask page</Link>
 		</p>
 		<p>
-			<Link to='/gfasdwew43arawsf'>New page</Link>
+			<Link to='/gsdfgsfdsgdfgsdf'>New page</Link>
 		</p>
 		<p>
 			<button>Button</button>

@@ -71,20 +71,20 @@ export default function PageAsk()
 			<button onClick={ buttonHandler }>Get answer</button>
 			<button onClick={ () => abortController?.abort() }>Abort</button>
 		</p>
+		<Markdown
+			remarkPlugins={[
+				remarkMath,
+				remarkGfm,
+			]}
+			rehypePlugins={[
+				rehypeMath,
+				highlithting,
+			]}
+		>
+			{ answer }
+		</Markdown>
 		<p>
-			<Markdown
-				remarkPlugins={[
-					remarkMath,
-					remarkGfm,
-				]}
-				rehypePlugins={[
-					rehypeMath,
-					highlithting,
-				]}
-			>
-				{ answer }
-			</Markdown>
+			<Link to='/'>Go back</Link>
 		</p>
-		<Link to='/'>Go back</Link>
 	</>);
 }
