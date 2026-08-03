@@ -3,7 +3,7 @@
 :root {
 	--background: #010409;
 	--foreground: #eef2fa;
-	--foreground-disabled: #ccced2;
+	--foreground-disabled: #aab5c3;
 
 	--input-background: #0d1117;
 
@@ -76,55 +76,43 @@ a:active { color: var(--link-active) }
 a:visited { color: var(--link-visited) }
 
 button {
-	background: var(--button-background);
-	border: 1px solid var(--button-border);
+	--local-bg: var(--button-background);
+	--local-bg-active: var(--button-background-active);
+	--local-border: var(--button-border);
+
+	background: var(--local-bg);
+	border: 1px solid var(--local-border);
 
 	margin: 2px;
 	padding: 7px 19px;
 	border-radius: 6px;
-
 	min-width: 80px;
 
 	cursor: pointer;
-
 	transition: background 0.2s;
 
 	&:hover,
 	&:focus-visible {
-		background: var(--button-background-active);
+		background: var(--local-bg-active);
 	}
 
 	&.success {
-		background: var(--button-success-background);
-		border-color: var(--button-success-border);
-
-		&:hover,
-		&:focus-visible {
-			background: var(--button-success-background-active);
-		}
+		--local-bg: var(--button-success-background);
+		--local-bg-active: var(--button-success-background-active);
+		--local-border: var(--button-success-border);
 	}
 
 	&.danger {
-		background: var(--button-danger-background);
-		border-color: var(--button-danger-border);
-
-		&:hover,
-		&:focus-visible {
-			background: var(--button-danger-background-active);
-		}
+		--local-bg: var(--button-danger-background);
+		--local-bg-active: var(--button-danger-background-active);
+		--local-border: var(--button-danger-border);
 	}
 
+	&:disabled,
 	&:disabled:hover,
 	&:disabled:focus-visible {
-		background: var(--button-background);
-
-		&.success {
-			background: var(--button-success-background);
-		}
-
-		&.danger {
-			background: var(--button-danger-background);
-		}
+		background: color-mix(in srgb, var(--local-bg), #111827 30%);
+		border-color: color-mix(in srgb, var(--local-border), #111827 30%);
 	}
 }
 
