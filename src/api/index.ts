@@ -4,6 +4,7 @@ import {
 } from 'elysia';
 
 import ollama from 'ollama';
+import Config from '../entities/config';
 
 const api = new Elysia({ prefix: '/api' })
 	.post('/ask', async function*({ set, body, request })
@@ -34,6 +35,15 @@ const api = new Elysia({ prefix: '/api' })
 				question: t.Readonly(t.String()),
 			}),
 		}
-	);
+	)
+	.get('/identity', async () =>
+	{
+		const encryptionKey = await Config.getValue('encryption-key');
+
+		return {
+			encryptionKey,
+		};
+	})
+;
 
 export default api;

@@ -23,8 +23,8 @@
     "noImplicitOverride": true,
 
     "paths": {
-      "@web/*": [ "./web/*" ],
       "@app/*": [ "./web/app/*" ],
+      "@assets/*": [ "./web/assets/*" ],
     },
 
     // Some stricter flags (disabled by default)

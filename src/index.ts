@@ -3,7 +3,9 @@ import path from 'path';
 import api from './api';
 import { startTray } from './tray';
 
-import webapp from '@web/index.html';
+import { migrateDatabase } from './database';
+
+import webapp from '../web/index.html';
 
 const app = Bun.serve({
 	routes: {
@@ -15,5 +17,6 @@ const app = Bun.serve({
 	development: true,
 });
 
-await startTray(app);
+// await startTray(app);
+await migrateDatabase();
 console.log(`Server running at http://127.0.0.1:${app.port}`);
