@@ -17,7 +17,7 @@ export default function Layout()
 	{
 		async function fetchIdentity()
 		{
-			const response = await fetch('/api/identity');
+			const response = await fetch('/api/auth/identity');
 			const identity = await response.json() as { encryptionKey: string | null };
 
 			if (!identity.encryptionKey) {

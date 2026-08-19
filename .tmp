@@ -1,0 +1,17 @@
+
+const kek = await importKEK(keySalt.toBase64(), passwordDeferred);
+const dek = await importDEK(rawDEK);
+
+console.log('DEK: ', dek);
+console.log('KEK: ', kek);
+console.log('KEK Salt: ', keySalt.toBase64());
+
+
+const message = 'Original message';
+
+const encrypted = await encrypt(dek, message);
+const decrypted = await decrypt(dek, encrypted);
+
+console.log('Original: ', message);
+console.log('Encrypted: ', encrypted.toBase64());
+console.log('Decrypted: ', new TextDecoder().decode(decrypted));

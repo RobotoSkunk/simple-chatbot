@@ -13,7 +13,6 @@ import {
 
 import {
 	type FeedbackType,
-	type Matcher,
 	type OptionsType,
 	ZxcvbnFactory,
 } from '@zxcvbn-ts/core';
@@ -21,6 +20,15 @@ import {
 import {
 	matcherPwnedFactory,
 } from '@zxcvbn-ts/matcher-pwned';
+
+import {
+	useNavigate,
+} from 'react-router';
+
+import { 
+	encrypt,
+	importKEK,
+} from '../../utils/crypto';
 
 import * as zxcvbnCommon from '@zxcvbn-ts/language-common';
 import * as zxcvbnDictionaryEn from '@zxcvbn-ts/language-en';
@@ -53,6 +61,7 @@ const zxcvbnOptions = {
 			'mcp',
 			'server',
 			'local',
+			window.location.toString(),
 		],
 	},
 	graphs: zxcvbnCommon.adjacencyGraphs,
@@ -117,6 +126,7 @@ const scores = [
 
 export default function Setup()
 {
+	const navigate = useNavigate();
 	const [ section, setSection ] = useState(0);
 
 	const [ password, setPassword ] = useState('');
@@ -137,18 +147,33 @@ export default function Setup()
 		return passwordScore >= 3;
 	}
 
-	async function checkPasswordStrength()
+	function passwordIsValid()
 	{
-		const result = await zxcvbn.checkAsync(passwordDeferred);
-		const score = offlineScoreFromGuesses(result.guesses);
-
-		setPasswordScore(score);
-		setFeedback(result.feedback);
+		return passwordIsSecure() && passwordDeferred === repeatedPassword;
 	}
 
 	useEffect(() =>
 	{
+		async function checkPasswordStrength()
+		{
+			const result = await zxcvbn.checkAsync(passwordDeferred);
+			if (ignore) {
+				return;
+			}
+
+			const score = offlineScoreFromGuesses(result.guesses);
+
+			setPasswordScore(score);
+			setFeedback(result.feedback);
+		}
+
+		let ignore = false;
 		checkPasswordStrength();
+
+		return () =>
+		{
+			ignore = true;
+		};
 	}, [ passwordDeferred ]);
 
 
@@ -171,7 +196,42 @@ export default function Setup()
 			</>
 		),
 		( // Password form
-			<form>
+			<form
+				method='POST'
+				onSubmit={ async (ev) =>
+				{
+					ev.preventDefault();
+
+					if (!passwordIsValid()) {
+						return;
+					}
+
+					const kekSalt = crypto.getRandomValues(new Uint8Array(32));
+					const rawDEK = crypto.getRandomValues(new Uint8Array(32));
+
+					const kek = await importKEK(kekSalt, passwordDeferred);
+					const encryptedDEK = await encrypt(kek, rawDEK.toBase64());
+
+					// const response = await fetch('/api/auth/register', {
+					// 	method: 'POST',
+					// 	headers: {
+					// 		'Content-Type': 'application/json',
+					// 	},
+					// 	body: JSON.stringify({
+					// 		password: passwordDeferred,
+					// 		encryptionKey: encryptedDEK.toBase64(),
+					// 		salt: kekSalt.toBase64(),
+					// 	}),
+					// });
+
+					// const json = await response.json();
+
+					// if (json.success) {
+					// 	changeSection(1);
+					// 	setTimeout(async () => await navigate('/'), 1000);
+					// }
+				} }
+			>
 				<motion.h1
 					variants={ variants }
 					layout
@@ -195,7 +255,6 @@ export default function Setup()
 					<input
 						id='password-input'
 						type='password'
-						placeholder='••••••••••••'
 						aria-label='Password input field'
 
 						onInput={ (ev) => setPassword(ev.currentTarget.value) }
@@ -212,7 +271,6 @@ export default function Setup()
 							<input
 								id='repeat-password-input'
 								type='password'
-								placeholder='••••••••••••'
 								aria-label='Repeat password input field'
 
 								onInput={ (ev) => setRepeatedPassword(ev.currentTarget.value) }
@@ -267,11 +325,10 @@ export default function Setup()
 								) }
 							</ul>
 						</div>
-						{ (passwordIsSecure() && passwordDeferred === repeatedPassword) &&
+						{ passwordIsValid() &&
 							<motion.button
 								variants={ variants }
 								style={{ marginTop: 22 }}
-								onClick={ () => changeSection(1) }
 							>
 								Next
 							</motion.button>
@@ -294,7 +351,7 @@ export default function Setup()
 						},
 						hide: {
 							transition: {
-								delayChildren: stagger(0.09, { from: 'last' }),
+								delayChildren: stagger(0.03, { from: 'last' }),
 							},
 						},
 					}}

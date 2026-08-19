@@ -72,3 +72,26 @@
 		margin-left: 8px;
 	}
 }
+
+.loader {
+	display: block;
+	position: relative;
+
+	width: 300px;
+	height: 4px;
+
+	margin: 0 auto;
+	margin-top: 12px;
+
+	& .bar {
+		display: block;
+
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		border-radius: 2px;
+
+		background: var(--foreground);
+	}
+}

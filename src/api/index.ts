@@ -4,9 +4,11 @@ import {
 } from 'elysia';
 
 import ollama from 'ollama';
-import Config from '../entities/config';
+
+import routesAuth from './authentication';
 
 const api = new Elysia({ prefix: '/api' })
+	.use(routesAuth)
 	.post('/ask', async function*({ set, body, request })
 		{
 			set.headers['content-type'] = 'text/plain';
@@ -36,14 +38,6 @@ const api = new Elysia({ prefix: '/api' })
 			}),
 		}
 	)
-	.get('/identity', async () =>
-	{
-		const encryptionKey = await Config.getValue('encryption-key');
-
-		return {
-			encryptionKey,
-		};
-	})
 ;
 
 export default api;
