@@ -34,6 +34,9 @@ import * as zxcvbnCommon from '@zxcvbn-ts/language-common';
 import * as zxcvbnDictionaryEn from '@zxcvbn-ts/language-en';
 import * as zxcvbnDictionaryEsEs from '@zxcvbn-ts/language-es-es';
 
+import srp from 'secure-remote-password/client';
+import bcrypt from 'bcryptjs';
+
 import '../globals.css';
 import './page.css';
 
@@ -212,24 +215,33 @@ export default function Setup()
 					const kek = await importKEK(kekSalt, passwordDeferred);
 					const encryptedDEK = await encrypt(kek, rawDEK.toBase64());
 
-					// const response = await fetch('/api/auth/register', {
-					// 	method: 'POST',
-					// 	headers: {
-					// 		'Content-Type': 'application/json',
-					// 	},
-					// 	body: JSON.stringify({
-					// 		password: passwordDeferred,
-					// 		encryptionKey: encryptedDEK.toBase64(),
-					// 		salt: kekSalt.toBase64(),
-					// 	}),
-					// });
+					const passwordSalt = await bcrypt.genSalt();
+					const passwordHash = await bcrypt.hash(password, passwordSalt);
 
-					// const json = await response.json();
+					const srpSalt = srp.generateSalt();
+					const srpPrivateKey = srp.derivePrivateKey(srpSalt, 'chatbot-user', passwordHash);
+					const srpVerifier = srp.deriveVerifier(srpPrivateKey);
 
-					// if (json.success) {
-					// 	changeSection(1);
-					// 	setTimeout(async () => await navigate('/'), 1000);
-					// }
+					const response = await fetch('/api/auth/register', {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify({
+							passwordSalt,
+							srpVerifier,
+							srpSalt,
+							dek: encryptedDEK.toBase64(),
+							kekSalt: kekSalt.toBase64(),
+						}),
+					});
+
+					const json = await response.json();
+
+					if (json.success) {
+						changeSection(1);
+						setTimeout(async () => await navigate('/'), 1000);
+					}
 				} }
 			>
 				<motion.h1
